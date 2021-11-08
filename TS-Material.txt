@@ -896,6 +896,1223 @@ price=9000;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+					any and implicity undefined
+////////////////////////////////////////////////////////////////////////////////////////////
+
+//no value , no type
+//a type is implicit undefined, so that we can initalize any value at any time
+let a;
+a = 100
+a = "hello"
+
+//if you want javascript like syntax, if you dont know any type or variable need to hold any value
+
+let b: any
+b = 100
+b = "hello"
+..............................................................................................
+/////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+..............................................................................................
+..............................................................................................	
+				Functions
+			 (args,parameters,return values)
+..............................................................................................
+
+..............................................................................................	
+				Functions
+			 (args,parameters,return values)
+..............................................................................................
+
+How to declare function, call?
+
+//functions declaration
+function  sayGreet(){
+    //logic
+    console.log('Hello , How are you?')
+}
+//function invocation
+sayGreet()
+..........................................................................................
+
+Args and parameters
+...................
+
+
+//name is arg
+function sayGreet(name) {
+    console.log(`Hello ${name}`)
+}
+//Subramanian is parameter
+sayGreet('Subramanian');
+//here we pass value 100, based on value type, type inference is enabled.
+sayGreet(100);
+
+function sayHello(name: string) {
+    console.log(`Hello ${name}`);
+}
+sayHello('Subramanian');
+//sayHello(1000) //error
+
+//default args : es 6 feature
+function multiply(a: number = 0, b: number = 0) {
+    let c = a * b;
+    console.log(`Multiply ${c}`)
+}
+multiply(10, 20)
+multiply();
+
+//optional args
+function setValues(name?: string, age?: number, city?: string) {
+    console.log(`name : ${name} age:${age} city :${city}`)
+}
+setValues('Subramanian', 41, 'Coimbatore')
+setValues()
+
+function setStocks(name: string, price: number = 0, qty?: number) {
+    console.log(`name : ${name} price:${price} qty :${qty}`)
+}
+setStocks('google');
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+Union types:
+
+function args type can be mixed ; either this or that
+
+for eg : id variable may be string or number - 
+
+ id: string | number
+
+
+
+Union type:
+..........
+function args type can be mixed ; either this or that
+
+for eg : id variable may be string or number - 
+
+ id: string | number
+
+
+function printId(id: number | string) {
+    console.log("Your ID is: " + id);
+}
+printId(100)
+printId("100")
+
+
+function printId(id: number | string) {
+    console.log(id.toUpperCase());
+
+}
+Property 'toUpperCase' does not exist on type 'string | number'.
+    Property 'toUpperCase' does not exist on type 'number'.
+
+TypeScript will only allow you to do things with the union if that thing is valid for every member of the union. For example, if you have the union string | number, you can’t use methods that are only available on string:
+
+Narrowing:
+how to work with this? narrowing:
+
+The solution is to narrow the union with code, the same as you would in JavaScript without type annotations. Narrowing occurs when TypeScript can deduce a more specific type for a value based on the structure of the code.
+
+
+//function uniion type
+
+function printId(id: number | string) {
+    console.log("Your ID is: " + id);
+}
+printId(100)
+printId("100")
+//printId(true) //error
+// function printId(id: number | string) {
+//     console.log(id.toUpperCase());
+
+// }
+// Property 'toUpperCase' does not exist on type 'string | number'.
+//     Property 'toUpperCase' does not exist on type 'number'.
+
+function printId1(id: number | string) {
+    if (typeof id === "string") {
+        // In this branch, id is of type 'string'
+        console.log(id.toUpperCase());
+    } else {
+        // Here, id is of type 'number'
+        console.log(id.toFixed());
+    }
+}
+printId1(100)
+printId1(123.86789);
+printId1("abc")
+
+function welcomePeople(x: string[] | string) {
+    if (Array.isArray(x)) {
+        // Here: 'x' is 'string[]'
+        console.log("Hello, " + x.join(" and "));
+    } else {
+        // Here: 'x' is 'string'
+        console.log("Welcome lone traveler " + x);
+    }
+}
+welcomePeople("subramanian")
+welcomePeople(['subu','ram'])
+/////////////////////////////////////////////////////////////////////////////////////////////
+				Return types
+..............................................................................................
+
+
+function getName(): string {
+    return "SUbramanian"
+}
+console.log(getName())
+
+function getValue(): number {
+    return 100
+}
+console.log(getValue())
+
+function doStuff(): void {
+    //return "hello"; //error
+    return; //void -undefined
+}
+function getId(): string | number {
+   //return 10 ;
+   return "100"
+   //return true;
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+					Arrow functions
+............................................................................................
+
+//arrow function will reduce the code of function declaration
+
+//function literal ; we can store function in a variable
+
+//es 5 style
+let hai = function () {
+    console.log('hai')
+};
+hai();
+//arrow style :es 6
+hai = () => {
+    console.log('hai')
+};
+hai();
+//rules ; if function has only one line of body ; remove {}
+hai = () => console.log('hai');
+hai();
+//parameters and arrow
+
+let add = function (a: number, b: number):void {
+    let c = a + b;
+    console.log(c);
+};
+add(10, 10)
+add = (a: number = 0, b: number = 0): void => {
+    let c = a + b;
+    console.log(c);
+};
+add(10, 10)
+//return 
+add = (a: number = 0, b: number = 0): number => {
+    return a + b;
+};
+console.log(add(10, 10));
+
+//only one line of return statement , we can remove {} and return statement
+add = (a: number = 0, b: number = 0): number => a + b;
+console.log(add(10, 10));
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+.............................................................................................
+				Object oriented Programming
+............................................................................................
+
+Object creations:
+
+1.constructor patterns
+  -functions  - es 5
+  -classes -es 6 and typescript
+2.literal pattern
+   both es 6
+
+class declaration:
+
+
+class Employee {
+    //hardcoded initalization: inside class
+    id: number = 1;
+    firstName: string = "Subramanian";
+    lastName: string = "Murugan";
+    salary: number = 100;
+
+    constructor(){
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}//instance creation
+//emp is reference variable
+//new is keyword
+//Employee () -  constructor call
+let emp = new Employee();
+console.log(emp)
+console.log(emp.id, emp.firstName, emp.lastName, emp.calculateSalary(900))
+/////////////
+state initalization(instance variable init):
+
+1.direct -hardcoded
+2.after object creation
+3.during object creation - constructor parameters and args
+
+Direct:
+
+class Employee {
+    //hardcoded initalization: inside class
+    id: number = 1;
+    firstName: string = "Subramanian";
+    lastName: string = "Murugan";
+    salary: number = 100;
+
+    constructor(){
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}//instance creation
+//emp is reference variable
+//new is keyword
+//Employee () -  constructor call
+let emp = new Employee();
+console.log(emp)
+console.log(emp.id, emp.firstName, emp.lastName, emp.calculateSalary(900))
+.............
+
+
+class Employee {
+    id: number
+    firstName: string
+    lastName: string
+    salary: number
+    //hardcoded initalization: constructor
+    constructor() {
+        this.id = 1;
+        this.firstName = 'Subramanian';
+        this.lastName = 'Murugan'
+        this.salary = 100;
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}//instance creation
+//emp is reference variable
+//new is keyword
+//Employee () -  constructor call
+let emp = new Employee();
+console.log(emp)
+console.log(emp.id, emp.firstName, emp.lastName, emp.calculateSalary(900))
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+After object creation:
+
+class Employee {
+    id: number
+    firstName: string
+    lastName: string
+    salary: number
+    //hardcoded initalization: constructor
+    constructor() {
+        this.id = 1;
+        this.firstName = 'Subramanian';
+        this.lastName = 'Murugan'
+        this.salary = 100;
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}//instance creation
+//emp is reference variable
+//new is keyword
+//Employee () -  constructor call
+let emp = new Employee();
+console.log(emp)
+//after object creation
+emp.id =9000;
+emp.firstName='foo'
+emp.lastName='bar';
+emp.salary=1000;
+console.log(emp)
+
+.............................................................................................
+
+constructor overloading/parameters
+
+
+class Employee {
+    id: number
+    firstName: string
+    lastName: string
+    salary: number
+    //hardcoded initalization: constructor
+    constructor(id: number = 1, firstName: string = "", lastName: string = "", salary: number = 0) {
+        this.id = id;
+        this.firstName = firstName
+        this.lastName = lastName
+        this.salary = salary
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}//instance creation
+//emp is reference variable
+//new is keyword
+//Employee () -  constructor call
+let emp = new Employee();
+console.log(emp)
+
+emp = new Employee(90,'Subramanian','Murugan',10000);
+console.log(emp)
+.............................................................................................
+...............................................................................................					null
+.............................................................................................
+
+null means no object is initalized to a variable.
+
+?. - Safe navigation operator
+
+?? - elivish operator to give fallback message incase if the reference is either null or undefined.
+
+
+if(emp!=null){
+
+}
+class Employee {
+    id: number
+    firstName: string
+    lastName: string
+    salary: number
+    //hardcoded initalization: constructor
+    constructor(id: number = 1, firstName: string = "", lastName: string = "", salary: number = 0) {
+        this.id = id;
+        this.firstName = firstName
+        this.lastName = lastName
+        this.salary = salary
+    }
+
+    //instance methods
+    calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+}
+
+let emp = null;
+//traditional way of accessing object properties by checking null
+// if(emp!==null){
+//     console.log(emp.id)
+//     console.log(emp.firstName)
+// }else{
+//     console.log('no value')
+// }
+
+//console.log(emp.id)
+// emp = new Employee()
+console.log(emp?.id) //safe navigation operator
+
+//replace with alternate value incase undefined using tenary operator
+console.log(emp?.id ? emp.id : 10)
+
+//elvish operator
+//if emp is null, replace with empty object
+console.log('fallback ', emp ?? {})
+
+//elvish notation to replace default values or fallbacks
+console.log(emp?.id ?? 0);
+
+function bar() {
+    // let emp = new Employee(1000);
+    let emp = null;
+    return emp;
+}
+function fallback() {
+    return 'Fallback'
+}
+console.log(bar()?.id ?? fallback())
+
+function printEmployee(emp) {
+    // if (emp !== null) {
+    //     console.log(emp.name);
+    // }
+    console.log(emp?.id ?? fallback())
+}
+
+.............................................................................................
+				 Encaspulation
+.............................................................................................
+Encapsulation:
+..............
+To Prevent code sharing from one code to another.
+
+code - collection of classes, variables,functions,......
+
+code is represented inside file.
+
+pl provides keywords to ensure that , how  we can allow the code to be shared
+
+TS provides keywords to prevent code sharing
+ 
+ -public - any where
+ -private - with in class 
+ -protected - with in class + inheritance
+
+only class members are public/private/protected.
+
+---if you declare any member(variables,methods) => by default is public.
+
+
+
+//Encapsulation : private,public,protected
+
+//explicit public ;
+
+class Employee {
+    public id: number
+    public firstName: string
+    public lastName: string
+    public salary: number
+    //hardcoded initalization: constructor
+    constructor(id: number = 1, firstName: string = "", lastName: string = "", salary: number = 0) {
+        this.id = id;
+        this.firstName = firstName
+        this.lastName = lastName
+        this.salary = salary
+    }
+
+    //instance methods
+    public calculateSalary(amount: number = 0): number {
+        return this.salary * amount;
+    }
+
+}
+
+let emp = new Employee(90,'Subramanian','Murugan',10000);
+console.log(emp.id,emp.firstName,emp.lastName,emp.calculateSalary(11))
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+private :
+
+class Auth {
+    private password: string = "abcd000"
+
+    private generatePassword() {
+        return this.password;
+    }
+    public getPassword() {
+        return this.generatePassword();
+    }
+}
+let auth = new Auth()
+// console.log(auth.password)
+//  console.log(auth.generatePassword())
+console.log(auth.getPassword())
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+.............................................................................................
+				Variables Types
+
+
+1.instance variable
+  variable declared inside class
+2.local variables
+  variables are declared inside method(including constructor)
+  or method args / constructor args
+3.static variables
+ variables delcared inside class with static modifier
+
+
+Note:
+ how to reduce variable declarations inside class (instance variable declaration)
+Typescript provides a facility to "Treat local variable as instance variable: constructor 
+args"
+
+ constructor args can be converted from local to instance variables
+
+ why : to reduce code.
+How to convert local variables into instance variables?
+
+ "Add" -public / private keywords in the constructor args
+
+default scope of instance variables  all are public
+// class Employee {
+//     //instance variables
+//     id: number;
+//     name: string;
+//     //id,name is local variable
+//     constructor(id: number, name: string) {
+//         //instancevariable:localvariable
+//         this.id = id;
+//         this.name = name;
+//     }
+// }
+//how to reduce code using public and private modifer
+// class Employee {
+//     constructor(public id: number, public name: string) {
+//         //instancevariable:instancevariable
+//         this.id = id;
+//         this.name = name;
+//     }
+// }
+
+class Employee {
+    constructor(public id: number, public name: string) { }
+}
+
+let emp = new Employee(1, 'ram');
+console.log(`id : ${emp.id} name ${emp.name}`)
+////////////////////////////////////////////////////////////////////////////////////////////
+
+..............................................................................................
+				Inheritance
+
+Types of Inheritance implementation:
+
+1.concrete class 
+2.interfaces
+3.abstract classes
+
+
+
+1.concrete class 
+
+//base class
+class Account {
+    constructor() {
+        console.log('account class')
+    }
+    deposit() {
+        return 10;
+    }
+}
+//dervied class
+class SavingsAccount extends Account {
+    constructor() {
+        super();
+        console.log('savings account class')
+    }
+    //overriding
+    deposit() {
+        return 100;
+    }
+}
+let sb = new SavingsAccount()
+console.log(sb.deposit())
+
+..............................................................................................
+
+interfaces:
+
+//interfaces
+
+interface Flyable {
+    fly(): string;
+}
+
+interface Eatable {
+    eat():string;
+}
+
+class Bird implements Flyable ,Eatable {
+    public fly(): string {
+        return 'Bird is flying'
+    }
+    public eat():string {
+        return 'eat'
+    }
+}
+class AirPlane implements Flyable {
+    public fly(): string {
+        return 'AirPlane is flying'
+    }
+}
+let flyRef:Flyable;
+flyRef = new Bird();
+console.log(flyRef.fly());
+
+flyRef = new AirPlane();
+console.log(flyRef.fly());
+
+
+let flyRef1 = new Bird() as Flyable
+console.log(flyRef1.fly());
+let eatRef = new Bird() as Eatable;
+console.log(eatRef.eat())
+
+flyRef1 =new AirPlane() as Flyable;
+console.log(flyRef1.fly());
+.............................................................................................
+//abstract class
+
+abstract class Animal {
+    abstract eat();
+    saveAnimal() {
+        return 'Save Animals from hunters'
+    }
+}
+
+class Tiger extends Animal {
+    public eat() {
+        console.log('eat')
+    }
+
+}
+let animal = new Tiger() as Animal;
+console.log(animal.saveAnimal());
+animal.eat()
+.............................................................................................
+.............................................................................................	
+					Arrays and Generics
+.............................................................................................
+
+
+//arrays
+
+1.Arrays
+array can hold collection of values.
+
+-It is built in object
+-It is basic dyanamic ds.
+-It can hold any type of data.
+
+I want to store array of numbers.
+
+1.normal syntax
+         let list:number[] = [1,2,3,4];
+
+2.generics syntax <>
+  
+     let list:Array<number> = [1,2,3,4];
+				
+
+let list = [1, "hello", true]
+console.log(list)
+
+//normal syntax
+let numberList: number[] = [1, 2, 3, 4, 5, 6];
+
+//generics - <type> - Array<?> - Array<number> Array<string>Array<Employee>
+let numberList1: Array<number> = [1, 2, 3, 4, 5, 6];
+
+class Employee {
+    id: number;
+    name: string;
+}
+//literal object
+let empList: Array<Employee> = [
+    { id: 1, name: 'subramanian' }
+];
+
+let empList1: Employee[] = [
+    { id: 1, name: 'subramanian' }
+];
+..............................................................................................
+			 Object types
+
+//object types
+//class
+
+//class as object type:
+class User {
+    id: number;
+    name: string;
+}
+
+let user: User = {
+    id: 1,
+    name: 'Subramanian'
+}
+//interface as type
+interface Order {
+    id: number;
+    value: number;
+
+}
+let order: Order = {
+    id: 1,
+    value: 13
+}
+
+//type keyword
+
+type Product = {
+    id: number;
+    name: string;
+}
+let product: Product = {
+    id: 1,
+    name: 'phone'
+}
+/////////////////////////////////////////////////////////////////////////////////////
+interface Settings {
+    id: number | string;
+    location?: string;
+    drive?: string;
+    url?: string;
+    username?: string;
+    password?: string;
+}
+
+let webserver: Settings = {
+    id: 1,
+    location: 'google.com'
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+				Enum
+..............................................................................................
+enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+console.log(Direction.Up)
+console.log(Direction.Down)
+..............................................................................................
+				Modules
+.............................................................................................
+..................................&&&&&&&&&&&&&...............................................
+				Modules
+.............................................................................................
+
+javascript is fundamentally does not have modularity like c,c++,java,C#
+
+How to organize code into different files and folders and how to link them and how to share them.
+
+c++ - header files
+java - packages
+c# - namespaces
+
+javascript - file based 
+
+-inside file, code is global by default
+ so i include many files, there is possiblity code clash.
+
+eg:
+ a.js
+   function sayGreet(){}
+
+ b.js
+   function sayGreet(){}
+
+<script src="a.js">
+<script src="b.js">
+ here only b.js saygreet will be taken.
+
+JS ;
+1. has no language level modular design for file loading ,linking , sharing
+
+2.Javascript engine provides simple loader which can load one .js file at a time.
+
+3.If file has linking with other file,that also should be loaded separtly.
+
+How to solve this issue?
+
+Via module design patterns.
+
+1.Namespace design pattern : which is core design pattern helps to organize code sharing only
+ 
+ ->how to encapsulate the code
+ which uses js core concept called "literal object/iife)"
+
+2.AMD
+
+3.CJS
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+4.ES 6 Module design pattern
+
+////////////////////////////////////////////////////////////////////////////////////////////
+5.System
+
+6.UMD
+
+Two design patterns only available in development:
+
+1.cjs - used in node.js
+
+2.es6 modules
+   can be used in browser
+   can be used in node
+ no direct implementation available in both env. we need loader.
+
+ loader is lib /program which will help to convert module specfic code into browser or node
+understandable format.
+
+cjs is built in node js, so we dont need any extra loaders.
+
+Loaders:
+ -webpack
+ -rollup
+/////////////////////////////////////////////////////////////////////////////////////////////
+E6 modularity and typescript 
+
+ typescript supports e6 modularity.
+
+ ts compiler con  convert es 6 module into cjs,amd,system,umd.
+
+ ts compiler by default convert es6 modules into cjs.
+
+E6 modularity and typescript 
+
+ typescript supports e6 modularity.
+
+ ts compiler con  convert es 6 module into cjs,amd,system,umd.
+
+ ts compiler by default convert es6 modules into cjs.
+
+
+Java code sharing
+
+package com.ibm.services
+
+class orderService {}
+
+
+import com.ibm.services.OrderService;
+
+
+Typescript and ES 6 Code sharing 
+
+export,export default - sharing code from one file to another
+
+import  - to use exported code from other files.
+
+what you can export?
+
+-any variables holding any values - numbers,strings,booleans,arrays,objects
+-function
+-class.
+
+
+if you run this code inside browser , you will get error, because browser cant understand/load
+es 6 modules.
+
+Solution:
+
+in order to run cjs/es6 inside browser , we need loader ; webpack.
+
+webpack:
+
+>npm install webpack webpack-cli --save-dev
+
+
+>webpack.config.js
+const path = require('path');
+
+module.exports = {
+    entry: './build/index.js',
+    mode: 'development',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+    },
+
+};
+
+>package.json
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
+    "build": "webpack --watch"
+  }
+npm run build
+>index.html
+
+    <script src="dist/bundle.js"></script>
+
+.............................................................................................
+
+src/mockdata/users.ts
+
+export const USERS: Array<any> = [
+    {
+        id: 1,
+        name: "Leanne Graham",
+        username: "Bret",
+        email: "Sincere@april.biz",
+        address: {
+            street: "Kulas Light",
+            suite: "Apt. 556",
+            city: "Gwenborough",
+            zipcode: "92998-3874",
+            geo: {
+                lat: "-37.3159",
+                lng: "81.1496"
+            }
+        },
+        phone: "1-770-736-8031 x56442",
+        website: "hildegard.org",
+        company: {
+            name: "Romaguera-Crona",
+            catchPhrase: "Multi-layered client-server neural-net",
+            bs: "harness real-time e-markets"
+        }
+    },
+    {
+        id: 2,
+        name: "Ervin Howell",
+        username: "Antonette",
+        email: "Shanna@melissa.tv",
+        address: {
+            street: "Victor Plains",
+            suite: "Suite 879",
+            city: "Wisokyburgh",
+            zipcode: "90566-7771",
+            geo: {
+                lat: "-43.9509",
+                lng: "-34.4618"
+            }
+        },
+        phone: "010-692-6593 x09125",
+        website: "anastasia.net",
+        company: {
+            name: "Deckow-Crist",
+            catchPhrase: "Proactive didactic contingency",
+            bs: "synergize scalable supply-chains"
+        }
+    },
+    {
+        id: 3,
+        name: "Clementine Bauch",
+        username: "Samantha",
+        email: "Nathan@yesenia.net",
+        address: {
+            street: "Douglas Extension",
+            suite: "Suite 847",
+            city: "McKenziehaven",
+            zipcode: "59590-4157",
+            geo: {
+                lat: "-68.6102",
+                lng: "-47.0653"
+            }
+        },
+        phone: "1-463-123-4447",
+        website: "ramiro.info",
+        company: {
+            name: "Romaguera-Jacobson",
+            catchPhrase: "Face to face bifurcated interface",
+            bs: "e-enable strategic applications"
+        }
+    },
+    {
+        id: 4,
+        name: "Patricia Lebsack",
+        username: "Karianne",
+        email: "Julianne.OConner@kory.org",
+        address: {
+            street: "Hoeger Mall",
+            suite: "Apt. 692",
+            city: "South Elvis",
+            zipcode: "53919-4257",
+            geo: {
+                lat: "29.4572",
+                lng: "-164.2990"
+            }
+        },
+        phone: "493-170-9623 x156",
+        website: "kale.biz",
+        company: {
+            name: "Robel-Corkery",
+            catchPhrase: "Multi-tiered zero tolerance productivity",
+            bs: "transition cutting-edge web services"
+        }
+    },
+    {
+        id: 5,
+        name: "Chelsey Dietrich",
+        username: "Kamren",
+        email: "Lucio_Hettinger@annie.ca",
+        address: {
+            street: "Skiles Walks",
+            suite: "Suite 351",
+            city: "Roscoeview",
+            zipcode: "33263",
+            geo: {
+                lat: "-31.8129",
+                lng: "62.5342"
+            }
+        },
+        phone: "(254)954-1289",
+        website: "demarco.info",
+        company: {
+            name: "Keebler LLC",
+            catchPhrase: "User-centric fault-tolerant solution",
+            bs: "revolutionize end-to-end systems"
+        }
+    },
+    {
+        id: 6,
+        name: "Mrs. Dennis Schulist",
+        username: "Leopoldo_Corkery",
+        email: "Karley_Dach@jasper.info",
+        address: {
+            street: "Norberto Crossing",
+            suite: "Apt. 950",
+            city: "South Christy",
+            zipcode: "23505-1337",
+            geo: {
+                lat: "-71.4197",
+                lng: "71.7478"
+            }
+        },
+        phone: "1-477-935-8478 x6430",
+        website: "ola.org",
+        company: {
+            name: "Considine-Lockman",
+            catchPhrase: "Synchronised bottom-line interface",
+            bs: "e-enable innovative applications"
+        }
+    },
+    {
+        id: 7,
+        name: "Kurtis Weissnat",
+        username: "Elwyn.Skiles",
+        email: "Telly.Hoeger@billy.biz",
+        address: {
+            street: "Rex Trail",
+            suite: "Suite 280",
+            city: "Howemouth",
+            zipcode: "58804-1099",
+            geo: {
+                lat: "24.8918",
+                lng: "21.8984"
+            }
+        },
+        phone: "210.067.6132",
+        website: "elvis.io",
+        company: {
+            name: "Johns Group",
+            catchPhrase: "Configurable multimedia task-force",
+            bs: "generate enterprise e-tailers"
+        }
+    },
+    {
+        id: 8,
+        name: "Nicholas Runolfsdottir V",
+        username: "Maxime_Nienow",
+        email: "Sherwood@rosamond.me",
+        address: {
+            street: "Ellsworth Summit",
+            suite: "Suite 729",
+            city: "Aliyaview",
+            zipcode: "45169",
+            geo: {
+                lat: "-14.3990",
+                lng: "-120.7677"
+            }
+        },
+        phone: "586.493.6943 x140",
+        website: "jacynthe.com",
+        company: {
+            name: "Abernathy Group",
+            catchPhrase: "Implemented secondary concept",
+            bs: "e-enable extensible e-tailers"
+        }
+    },
+    {
+        id: 9,
+        name: "Glenna Reichert",
+        username: "Delphine",
+        email: "Chaim_McDermott@dana.io",
+        address: {
+            street: "Dayna Park",
+            suite: "Suite 449",
+            city: "Bartholomebury",
+            zipcode: "76495-3109",
+            geo: {
+                lat: "24.6463",
+                lng: "-168.8889"
+            }
+        },
+        phone: "(775)976-6794 x41206",
+        website: "conrad.com",
+        company: {
+            name: "Yost and Sons",
+            catchPhrase: "Switchable contextually-based project",
+            bs: "aggregate real-time technologies"
+        }
+    },
+    {
+        id: 10,
+        name: "Clementina DuBuque",
+        username: "Moriah.Stanton",
+        email: "Rey.Padberg@karina.biz",
+        address: {
+            street: "Kattie Turnpike",
+            suite: "Suite 198",
+            city: "Lebsackbury",
+            zipcode: "31428-2261",
+            geo: {
+                lat: "-38.2386",
+                lng: "57.2232"
+            }
+        },
+        phone: "024-648-3804",
+        website: "ambrose.net",
+        company: {
+            name: "Hoeger LLC",
+            catchPhrase: "Centralized empowering task-force",
+            bs: "target end-to-end models"
+        }
+    }
+];
+
+src/services/user.service.ts
+
+import { USERS } from '../mockdata/users'
+
+export class UserService {
+    constructor() {
+
+    }
+    public findAll(): Array<any> {
+        return USERS;
+    }
+}
+
+src/index.ts
+
+import { log } from './util/logger';
+import {UserService} from './services/user.service';
+
+
+let userService = new UserService();
+log('user service : fetch')
+console.log(userService.findAll());
+........................................................................................................
+				Decorators
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
