@@ -1,0 +1,12 @@
+<div style="background-color: black; color: whitesmoke;">
+    <h1>Attribute Binding</h1>
+    <h2>Static Attribute - Static Image</h2>
+    <img src="favicon.ico" />
+    <h2>Dynamic Attribute - Dynamic Image</h2>
+    <img [src]="imageLocation" />
+    <h3>Dynamic Attribute - Enable or Disable Element</h3>
+    <button [disabled]="isEnabled">Hello</button>
+    <div [hidden]="isHidden">
+        <h1>Hidden</h1>
+    </div>
+</div>

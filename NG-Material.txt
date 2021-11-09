@@ -725,10 +725,180 @@ ng g m body --module=app
 ng g c body/body  --flat=true --export=true --inline-style=true --skip-tests=true   --module=body
 ..............................................................................................
 
+...............................................................................................				Data binding
+..............................................................................................
+
+UI types
+
+1.static ui
+   only html
+2.dynamic ui
+  html + data and which change by user interactions
+
+Data binding:
+ Transfering state to ui(view)
+
+Types of databinding
+
+1.interpolation
+2.property binding
+3.attribute binding
+4.event binding
+5.two way data binding
+6.class binding
+7.style binding
 
 
+MVC - Angular is MVC Framework
+M- DATA
+V-View -template
+C - Controller - Component
+
+...........................................................................................
+
+Interpolation:
+import { Component, OnInit } from '@angular/core';
+import { Address } from '../types/address.type';
+
+@Component({
+  selector: 'app-interpolation',
+  templateUrl: './interpolation.component.html',
+  styles: [
+  ]
+})
+export class InterpolationComponent implements OnInit {
+
+  //instance variables ; models- data
+  firstName: string = "Subramanian";
+  age: number = 18;
+  isValid: boolean = true;
+  //objects
+  address: Address = {
+    city: 'Coimbatore',
+    state: 'TN'
+  };
+  //Array
+  skills: Array<string> = ["javascript", "angular", "typescript", "microservices"];
 
 
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+<div>
+    <h1>InterPolation</h1>
+    <h2>Primitives</h2>
+    <h3>String - {{firstName}}</h3>
+    <h3>Number - {{age}}</h3>
+    <h3>Boolean -{{isValid}}</h3>
+    <h2>Object</h2>
+    <h3>Object Properties {{address.city}} {{address.state}}</h3>
+    <h2>Array</h2>
+    <ul>
+        <li *ngFor="let skill of skills">
+            {{skill}}
+        </li>
+    </ul>
+
+</div>
+.............................................................................................
+2.attribute binding
+3.property binding
+
+Angular instructions:
+....................
+Collection of symbols used inside html - template
+
+{{}}
+[]
+*
+#
+()
+[()]
+..........................................................................................
+			[] -  symbol used for property,attribute,style,class binding
+...........................................................................................
+
+What is   attribute and property? - []
+
+<img src="imagelocation"/>
+      |
+ attribute
+<a href="url">
+   |
+ attribute
+
+Attribute values:
+ - static attribute
+eg:
+   <img src="logo.png">
+
+
+What is   attribute and property? - []
+
+<img src="imagelocation"/>
+      |
+attribute
+
+Why [] ?
+
+  To bind value dynamically.
+  
+<img src="logo.png"/> -static image
+
+<img [src]="variable"> - dynamic image
+
+<div hidden> --- static value to hide div element
+
+<div [hidden]="booleanvariable"> --- static value to hide div element
+
+<button enabled>
+
+<button [enabled="booleanvariable"> - dynamic value
+
+if you use "[]"  on html elements which is called "attribute binding"
+............................................................................................
+				  Styling Components
+.............................................................................................
+
+Styles in angular :
+
+1.global style
+2.component specific style
+
+global style:
+
+style.css
+
+bootstrap -  npm install bootstrap
+
+angular.json
+ "styles": [
+              "src/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.css"
+            ],
+
+
+<div class="container">
+  <h1>Angular Data Binding</h1>
+  <!-- <app-interpolation></app-interpolation> -->
+  <app-attributes></app-attributes>
+</div>
+
+<div style="background-color: black; color: whitesmoke;">
+    <h1>Attribute Binding</h1>
+    <h2>Static Attribute - Static Image</h2>
+    <img src="favicon.ico" />
+    <h2>Dynamic Attribute - Dynamic Image</h2>
+    <img [src]="imageLocation" />
+    <h3>Dynamic Attribute - Enable or Disable Element</h3>
+    <button [disabled]="isEnabled">Hello</button>
+    <div [hidden]="isHidden">
+        <h1>Hidden</h1>
+    </div>
+</div>
 
 
 
