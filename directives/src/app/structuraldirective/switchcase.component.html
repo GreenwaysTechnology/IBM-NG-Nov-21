@@ -1,0 +1,24 @@
+<div>
+    <h2>Swich case </h2>
+    <div [ngSwitch]="feedback">
+        <p *ngSwitchCase="'good'">Good</p>
+        <p *ngSwitchCase="'verygood'">Very Good</p>
+        <p *ngSwitchCase="'bad'">Bad</p>
+        <p *ngSwitchDefault>Your input is not matching</p>
+    </div>
+    
+<div [ngSwitch]="feedback">
+    <ng-template [ngSwitchCase]="'good'">
+        <h3>Good</h3>
+    </ng-template>
+    <ng-template [ngSwitchCase]="'verygood'">
+        <h3>Very Good</h3>
+    </ng-template>
+    <ng-template [ngSwitchCase]="'bad'">
+        <h3>bad</h3>
+    </ng-template>
+    <ng-template ngSwitchDefault>
+        <h3>Your input is not matching</h3>
+    </ng-template>
+</div>
+</div>

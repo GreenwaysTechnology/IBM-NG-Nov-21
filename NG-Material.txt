@@ -1370,10 +1370,504 @@ export class ParentComponent {
 
 }
 
+..............................................................................................
+				  Dynamic Css  - How to change Style dynamically
+.............................................................................................
+class binding and style binding
+...............................
+
+class binding:
+
+<div [class.special]="isSpecial" [class]="classExpression">Some text.</div>
+
+style binding:
+
+<nav [style.background-color]="expression"></nav>
+<nav [style.backgroundColor]="expression"></nav>
+
+
+
+<div (click)="changeStyle()" [class.special]="isSpecial">Some text.</div>
+<a [style.text-decoration]="activeLinkStyle">Home Page</a>
+
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-dynamiccss',
+  templateUrl: './dynamiccss.component.html',
+  styles: [
+  ]
+})
+export class DynamiccssComponent implements OnInit {
+  isSpecial: boolean = true
+  activeLinkStyle = 'overline';
+  constructor() { }
+
+  changeStyle() {
+    this.isSpecial = !this.isSpecial
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+
+styles.css
+.special {
+   font-size: large;
+   font-weight: 400;
+   color:brown;
+}
+..............................................................................................
+..............................................................................................
+					..............................................................................................
+				 Pipes
+..............................................................................................
+
+What is pipe?
+ pipe object used for data formating.
+
+eg:
+ show uppercase
+ show money values - $,#,
+ show date format  - 1/10/2021 , feb 10 2021...
+ custom formates
+
+Angular provides lot of built in pipes, you can write your own pipes as well.
+....
+Syntax:
+  some data | nameof the pipe.
+
+Pipe with Input :
+  some data | nameof the pipe:input.
+
+Builtin pipes:
+
+DatePipe: Formats a date value according to locale rules.
+
+UpperCasePipe: Transforms text to all upper case.
+
+LowerCasePipe: Transforms text to all lower case.
+
+CurrencyPipe: Transforms a number to a currency string, formatted according to locale rules.
+
+DecimalPipe: Transforms a number into a string with a decimal point, formatted according to locale rules.
+
+PercentPipe: Transforms a number to a percentage string, formatted according to locale rules.
+
+asyncPipe : to bind list of values async
+
+
+<div>
+  <h1 style="text-align: center;">Pipes</h1>
+  <div>
+    <h1>String</h1>
+    <p>{{message | uppercase}}</p>
+    <p>{{message | lowercase}}</p>
+    <p>{{message | titlecase}}</p>
+    <h1>Numbers</h1>
+    <p>{{price | percent}}</p>
+    <p>{{price | currency}}</p>
+    <!-- pipe with input -->
+    <p>{{price | currency:'INR'}}</p>
+    <h1>Date</h1>
+     <p>{{date | date}}</p>
+     <p>{{date | date:'short'}}</p>
+     <p>{{date | date:'dd/MM/yyyy'}}</p>
+
+    <!-- Pipe chaining -->
+    <p>{{date | date:'medium' | uppercase}}</p>
+
+    <!-- Json -->
+    <h1>JSON</h1>
+
+    <p>{{employee | json}}</p>
+    <h1>Custom Pipes</h1>
+    <p>{{price | decimalfraction}}</p>
+    <p>{{price | decimalfraction:3}}</p>
+  </div>
+</div>
+
+<!-- 10.8766 --- >10.9 / 10.99 -->
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'decimalfraction'
+})
+export class DecimalfractionPipe implements PipeTransform {
+
+  transform(value: number, numberofDigits: number = 1): string {
+    return value.toFixed(numberofDigits)
+  }
+
+}
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'pipes';
+  message: string = "hello!"
+  price: number = 1000.898766
+  date = new Date();
+  employee = {
+    id: 1,
+    name: 'subramanian',
+    city: 'coimbatore'
+  }
+}
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DecimalfractionPipe } from './decimalfraction.pipe';
+
+
+
+@NgModule({
+  declarations: [
+    DecimalfractionPipe
+  ],
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    DecimalfractionPipe
+  ]
+})
+export class UtilsModule { }
+..............................................................................................
+				 Directives
+.............................................................................................
+
+............................................................................................
+					Directives
+...........................................................................................
+
+What is directive?
+  Directive is custom element / attribute..
+
+<app-root> ,<app-root [title]>
+
+
+Types of Directives:
+1.Template directive
+2.Structural directive
+3.Attribute directive
 
 
 
 
+1.Template directive
+   The directive with Template ; all components create template directive
+  <app-root> ----------------template directive
+  <app-profile>--------------template directive
+
+All component's meta data is inherited from Directive meta.
+Directive is parent , Component is child
+
+Every component is directive.
+
+
+2.Structural Directive
+   It is type of directive, used to change HTML Layouts.
+   They shape or reshape the DOM's "Structure" typically by adding,removing and manipulating
+   the host elements to which they attached.
+   
+  -Host element means html elements eg div,span,li,table.
+  -It is one of the "special attribute" directive
+  -All structural directive starts with "*" notation.
+
+Built in structural directives
+
+1.*ngFor : for loop
+2.*ngIf  : if condition
+3.*ngSwitch : switch
+
+..............................................................................................						    CommonModule
+
+Where are structural directives?
+
+ngFor itself is object part of commonmodule.
+
+incase if you are using structural directives inside submodule, commonModule must have been injected.
+
+if any component part of main module, we dont need to inject commonModule becuase BrowserModule which contains all structural directives.
+
+
+
+
+
+List /Array rendering:
+......................
+
+Layouts:
+1.List view Layout
+   -ul li
+2.Card View Layout
+  div
+3.Grid View Layout
+  table tr td
+
+
+1.for Loop: *ngFor
+
+-where ever you want to repeate elements
+
+element could be dom element or custom elements
+
+eg:
+ <anyelement *ngFor="condition">
+
+ <div *ngFor="let variableName of arrayname">
+       {{VariableName.property}}
+ </div>
+ This code will create more div elements
+
+ <app-item-list *ngFor="">
+Static view:
+<ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+
+    </ul>
+
+<div>
+    <h1 style="text-align: center;">For loop</h1>
+
+    <!--ul element-->
+    <ul>
+        <li *ngFor="let i of numbers">{{i}}</li>
+    </ul>
+    <!--Ui element for tod-->
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let todo of todos">
+            <span class="badge badge-primary badge-pill"> {{todo.id}} </span> {{todo.title}}
+        </li>
+
+    </ul>
+    <div class="card" *ngFor="let todo of todos">
+        <h5 class="card-header">{{todo.id}}</h5>
+        <div class="card-body">
+            <h5 class="card-title">{{todo.userId}}</h5>
+            <p class="card-text">{{todo.title}}</p>
+            <a href="#" class="btn btn-primary">Update</a>
+        </div>
+    </div>
+</div>
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+eg:
+<div>
+    <ul>
+        <li *ngFor="let course of courses">
+            {{course}}
+        </li>
+    </ul>
+</div>
+<h2>Users data</h2>
+<div>
+    <div *ngFor="let user of users">
+        <h3>{{user.username}}</h3>
+        <p>{{user.email}}</p>
+        <address>
+            <p>{{user.address.street}},{{user.address.city}}</p>
+        </address>
+    </div>
+</div>
+
+import { Component, OnInit } from '@angular/core';
+import { USERS } from '../mock-data/users';
+
+@Component({
+  selector: 'app-forloop',
+  templateUrl: './forloop.component.html',
+  styles: [
+  ]
+})
+export class ForloopComponent implements OnInit {
+
+  courses: Array<string> = ["javascript", "angular", "Microservices"]
+
+  users: Array<any> = USERS;
+
+
+
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+.............................................................................................
+				if..else,ngtemplate,#(template reference variable)
+............................................................................................
+
+import { Component, OnInit } from '@angular/core';
+import { USERS } from '../mock-data/users';
+
+@Component({
+  selector: 'app-ifelse',
+  templateUrl: './ifelse.component.html',
+  styles: [
+  ]
+})
+export class IfelseComponent implements OnInit {
+
+  isEnabled: boolean = true
+  users!: Array<any>;
+  loading: boolean = true;
+  status: string = "loading....."
+  isHidden: boolean = false;
+
+  constructor() {
+    setTimeout(() => {
+      this.users = USERS;
+      this.loading = !this.loading;
+    }, 5000);
+  }
+
+  toggle() {
+    this.isHidden = !this.isHidden;
+  }
+  ngOnInit(): void {
+  }
+
+}
+<div *ngIf="isEnabled; else mycondition">
+    <h1>You have Facility!</h1>
+</div>
+
+<ng-template #mycondition>
+    <h1>Sorry! Facility is not available</h1>
+</ng-template>
+
+<h2>Progress bar</h2>
+<div *ngIf="loading; else notLoading  ">
+    <h2>{{status}}</h2>
+</div>
+<ng-template #notLoading>
+    <div *ngFor="let user of users">
+        <h3>{{user.username}}</h3>
+        <p>{{user.email}}</p>
+        <address>
+            <p>{{user.address.street}},{{user.address.city}}</p>
+        </address>
+    </div>
+</ng-template>
+<h2>Ng vs Hidden attribute</h2>
+<button class="btn btn-success" (click)="toggle()">Toggle</button>
+<!--Show and Hide-->
+<!-- <div *ngIf="isHidden">
+    <h1>Hello</h1>
+</div> -->
+<div [hidden]="isHidden">
+    <h1>Hai</h1>
+</div>
+..............................................................................................
+					Switch case
+..............................................................................................
+
+<h1 style="text-align: center;">Swich case </h1>
+<input [(ngModel)]="input">
+<button (click)="showFeedback()">Show Feedback</button>
+
+<div [ngSwitch]="feedback">
+    <p *ngSwitchCase="'good'">Good</p>
+    <p *ngSwitchCase="'verygood'">Very Good</p>
+    <p *ngSwitchCase="'bad'">Bad</p>
+    <p *ngSwitchDefault>Your input is not matching</p>
+</div>
+
+<div [ngSwitch]="feedback">
+    <ng-template [ngSwitchCase]="'good'">
+        <h3>Good</h3>
+    </ng-template>
+    <ng-template [ngSwitchCase]="'verygood'">
+        <h3>Very Good</h3>
+    </ng-template>
+    <ng-template [ngSwitchCase]="'bad'">
+        <h3>bad</h3>
+    </ng-template>
+    <ng-template ngSwitchDefault>
+        <h3>Your input is not matching</h3>
+    </ng-template>
+</div>
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-switchcase',
+  templateUrl: './switchcase.component.html',
+  styles: [
+  ]
+})
+export class SwitchcaseComponent implements OnInit {
+
+  input: string = ""
+  feedback: string = "good"
+  constructor() { }
+  showFeedback() {
+    this.feedback = this.input
+  }
+
+  ngOnInit(): void {
+  }
+
+}
+..............................................................................................
+				   Attribute Directives
+.............................................................................................
+
+How to add new extra attributes on html elements
+
+<div myattribute=somevalue>
+
+ Adding extra behaviour to existing dom elements.
+
+eg:
+ <div subu="">
+
+ <div appHighlight>
+
+How to create our own attribute directive.
+
+import { Directive, ElementRef, HostListener } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+
+  constructor(private element:ElementRef) { 
+    //  console.dir(this.element.nativeElement)
+    this.element.nativeElement.style.backgroundColor = 'yellow'
+  }
+  @HostListener('mouseenter')
+  onMouseEnter() {
+    this.highLight('blue')
+  }
+  @HostListener('mouseleave')
+  onMouseLeave() {
+    this.highLight(null)
+  }
+  private highLight(color: any) {
+    this.element.nativeElement.style.backgroundColor = color
+  }
+}
+<div>
+    <h1 appHighlight>IBM</h1>
+
+    <p appHighlight>IBM</p>
+
+</div>
+..............................................................................................
+					Forms
+.............................................................................................
 
 
 

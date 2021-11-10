@@ -1,0 +1,41 @@
+<div>
+    <h1>Simple If</h1>
+    <div *ngIf="isValid">
+        <h2>Valid</h2>
+    </div>
+    <h2>If ...else</h2>
+    <div *ngIf="isEnabled;else myelement">
+        <h2>Enabled</h2>
+    </div>
+    <!--ng-template is built in component used to represent else block-->
+    <!--# template reference variable-->
+    <ng-template #myelement>
+        <h2>Disabled</h2>
+    </ng-template>
+    <hr>
+    <div>
+        <h2>Show or Hide</h2>
+        <button (click)="toggle()" class="btn btn-success">Show/Hide Using If</button>
+        <!--Toggle using if-->
+        <div *ngIf="isHidden">
+            <h2>Show Or Hide</h2>
+        </div>
+        <hr>
+        <button (click)="toggle1()" class="btn btn-success">Show/Hide Using Attribute</button>
+
+        <div [hidden]="hide">
+            <h2>Hidden</h2>
+        </div>
+    </div>
+
+    <hr>
+    <h2>Progress bar</h2>
+    <div *ngIf="loading; else notLoading">
+        <h5>Loading....</h5>
+    </div>
+    <ng-template #notLoading>
+        <ul>
+            <li *ngFor="let todo of todos">{{todo.title}}</li>
+        </ul>
+    </ng-template>
+</div>

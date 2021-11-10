@@ -1,0 +1,15 @@
+<div>
+    <h2>For Loop : Simple List</h2>
+    <ul>
+        <li *ngFor="let num of numList">{{num}}</li>
+    </ul>
+</div>
+<hr>
+<div class="card" *ngFor="let todo of todos">
+    <h5 class="card-header">{{todo.id}}</h5>
+    <div class="card-body">
+        <h5 class="card-title">{{todo.userId}}</h5>
+        <p class="card-text">{{todo.title}}</p>
+        <a href="#" class="btn btn-primary">Update</a>
+    </div>
+</div>
