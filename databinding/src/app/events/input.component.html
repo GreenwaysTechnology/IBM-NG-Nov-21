@@ -1,0 +1,39 @@
+<div>
+    <h2>Input From the Keyboard</h2>
+    <div>
+        <h4>{{value}}</h4>
+    </div>
+    <div>
+        <!--Angular provides a global variable through which we can access dom-->
+        <h3>With Listener</h3>
+        <input (input)="onInput($event)" >
+    </div>
+
+    <div>
+        <h4>{{value1}}</h4>
+    </div>
+    <div>
+        <!--Angular provides a global variable through which we can access dom-->
+        <h3>Without  Listener</h3>
+        <input (input)="value1=$event.target.value" >
+    </div>
+
+    <div>
+        <h4>{{value2}}</h4>
+    </div>
+    <div>
+        <!--Angular provides a global variable through which we can access dom-->
+        <h3>attribute Binding + Event Binding</h3>
+        <input [value]="value2" (input)="value2=$event.target.value" >
+    </div>
+
+    <div>
+        <h4>{{value3}}</h4>
+    </div>
+    <div>
+        <!--Angular provides a global variable through which we can access dom-->
+        <h3>attribute Binding + Event Binding = Banana Box Notation [()] </h3>
+        <!--ngModel is built in object-->
+        <input [(ngModel)]="value3" >
+    </div>
+</div>

@@ -4,3 +4,8 @@ body {
     background-color:cadetblue;
     width: auto;
 }
+.special {
+    font-size: large;
+    font-weight: 400;
+    color:brown;
+ }

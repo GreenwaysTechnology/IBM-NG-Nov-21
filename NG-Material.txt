@@ -899,6 +899,485 @@ angular.json
         <h1>Hidden</h1>
     </div>
 </div>
+..............................................................................................
+					Property Binding
+
+
+What is property binding?
+ Passing dynamic values  to the custom elements
+
+Passing data from parent component to child component.
+we can pass data upto n of childrens
+Which is called "uni directional data flow model"
+Components can be communicated via props binding.
+
+
+<app-greet  [message]="variable|value"  ></app-greet>
+
+
+@Component({
+ selector:'app-greet',
+ template: `<div> </div>
+})
+export class GreeterComponent{
+
+}
+
+Component Communication: - How components can pass data.
+
+1.Parent -Child => via property binding
+2.Child- Parent
+3.across the components -sibilings -  via Services
+
+.............................................................................................
+			     Property binding
+...........................................................................................
+
+Passing data from parent component to child component.
+we can pass data upto n of childrens
+Which is called "uni directional data flow model"
+Components can be communicated via props binding.
+
+Two steps:
+
+How to pass data from the parent to child?
+
+1.From the parent component : passing data
+  
+  <app-greeter [message]="message">
+
+ message:string="hello"
+
+2. How to receive the data
+   
+   @Input() decorator
+   message:string=""
+................
+
+  import { Component, OnInit } from '@angular/core';
+  import { Address } from '../types/address.type';
+
+  @Component({
+    selector: 'app-parent',
+    templateUrl: './parent.component.html',
+    styles: [
+    ]
+  })
+  export class ParentComponent implements OnInit {
+    mymessage: string = "Hello! Property"
+    address:Address = {
+      city:'Coimbatore'
+    }
+    skills:Array<string> = ["java","javascript","Angular"]
+    // address!: Address
+    constructor() { }
+
+    ngOnInit(): void {
+    }
+
+  }
+
+parent.component.html
+<h2>This is parent</h2>
+<app-child [message]="mymessage" 
+[address]="address" [skills]="skills">
+
+</app-child>
+  
+............
+
+import { Component, Input, OnInit } from '@angular/core';
+import { Address } from '../types/address.type';
+
+@Component({
+  selector: 'app-child',
+  templateUrl: './child.component.html',
+  styles: [
+  ]
+})
+export class ChildComponent implements OnInit {
+
+  @Input()
+  message: string = "";
+
+  /**
+   * ts config 
+   * strict: true 
+   * means that variable must have been initalized
+   * but i dont want to make strict : false
+   * there is solution : definite assigment operator "!"
+   */
+  @Input()
+  address!: Address;
+
+  @Input('skills')
+  myskills!:Array<string>;
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+child.component.html
+
+<h2>Data from Parent</h2>
+<h3>String {{message}}</h3>
+<h3>Object {{address?.city ?? "Default city"}}</h3>
+<h3>Array</h3>
+<ul>
+    <li *ngFor="let skill of myskills">
+        <span>{{skill}}</span>
+    </li>
+</ul>
+
+App component:
+ <div>
+    <h1>Property Binding</h1>
+    <app-parent></app-parent>
+  </div>
+		..............................................................................................
+					Event Binding
+.............................................................................................
+
+
+EventTarget Object: Event
+  It connects dom object and listner method.
+  where listener method can read values and other properties of dom object.
+
+btn.addEventListener = function(evt){
+  evt.target   
+
+}
+$event  - is global variable from the angular which has reference of EventTarget object
+
+
+Two way binding:
+
+-data is transfered from view to controller and controller to view 
+
+How to implement two way data binding
+
+1.events
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Simple events:
+<div>
+    <button class="btn btn-success" (click)="onClick()" >Click</button>
+    <!-- Pass data to listener -->
+    <hr>
+    <button class="btn btn-success" (click)="onReceive('hello how are you?')" >SendData</button>
+</div>
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-event',
+  templateUrl: './event.component.html',
+  styles: [
+  ]
+})
+export class EventComponent implements OnInit {
+
+
+  //listener function
+  onClick() {
+    alert('hello')
+  }
+  onReceive(message:string) {
+    alert(message)
+  }
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+..........................................................................................
+			How to read input from the keyboards
+                           (Two way data binding)						
+............................................................................................
+
+
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { EventComponent } from './event.component';
+import { InputComponent } from './input.component';
+import { FormsModule } from '@angular/forms';
+
+
+
+@NgModule({
+  declarations: [
+    EventComponent,
+    InputComponent
+  ],
+  imports: [
+    CommonModule,FormsModule
+  ],
+  exports: [
+    EventComponent,
+    InputComponent
+  ]
+})
+export class EventbindingModule { }
+
+
+
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-input',
+  templateUrl: './input.component.html',
+  styles: [
+  ]
+})
+export class InputComponent implements OnInit {
+
+  text:string = ""
+  messageOne:string = ""
+  messageTwo:string ="defaultvalue"
+  messageThree:string = ""
+  readInput(ctrl: any) {
+    this.text = ctrl.target.value 
+  }
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+input.component.html
+
+<div>
+    <h2>Input Event</h2>
+    <div>
+        <h3>With Listener</h3>
+        <h3>{{text}}</h3>
+        <input (input)="readInput($event)">
+    </div>
+
+    <div>
+        <h3>Without Listener</h3>
+        <h3>{{messageOne}}</h3>
+        <input (input)="messageOne=$event.target.value">
+    </div>
+    <div>
+        <h3>Property Binding + Event Binding </h3>
+        <h3>{{messageTwo}}</h3>
+        <input  [value]="messageTwo" (input)="messageTwo=$event.target.value">
+    </div>
+    <div>
+        <h3>Property Binding + Event Binding = Banana Box Notation [()] </h3>
+        <h3>{{messageThree}}</h3>
+        <input [(ngModel)]="messageThree">
+    </div>
+</div>
+Types of events:
+
+1.dom events - click,input,keypress.......
+2.custom events - events for custom elements
+
+Why custom events?
+
+Component communcation:
+
+1.parent to child - via props pattern
+2.child to parent - via custom events
+3.across components -  via services
+
+2.child to parent - via custom events
+
+
+Steps : write two components
+
+1.parent
+2.child
+
+2.child to parent - via custom events
+
+
+
+Steps : write two components
+
+1.parent
+2.child
+
+
+Parent
+
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-parent',
+  templateUrl: './parent.component.html',
+  styles: [
+  ]
+})
+export class ParentComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+2.Child Component
+
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-child',
+  templateUrl: './child.component.html',
+  styles: [
+  ]
+})
+export class ChildComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
+
+Step 2:
+
+ EventEmitter:
+
+Use in components with the @Output directive to emit custom events synchronously or asynchronously, and register handlers for those events by subscribing to an instance.
+
+1.EventEmitter is used to broad cast values to Parent Components
+
+class EventEmitter<T> extends Subject {
+  constructor(isAsync?: boolean): EventEmitter<T>
+  emit(value?: T): void
+  subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription
+}
+
+2.EventEmitter object is Subclass Rxjs Subject.
+
+create EventEmitter Object of type in child compoent.
+
+eventemitter is used to send custom events.
+
+   onSendRequest = new EventEmitter<string>();
+
+3.We have to decorate eventemitter with @Output()
+
+  @Output()
+  onSendRequest = new EventEmitter<string>();
+
+4.send data to Parent Component
+
+    <div>
+        <input [(ngModel)]="message">
+    </div>
+    <div>
+        <button (click)="onSend()">Send To Parent</button>
+    </div>
+
+export class ChildComponent {
+
+  message: string = "Good Value"
+  //event emitter Declaration
+  @Output()
+  onSendRequest = new EventEmitter<string>();
+  onSend() {
+    alert('sending data to parent')
+    //emit data  -  next method in subject
+    this.onSendRequest.emit(this.message)
+  }
+
+}
+
+5.Listens event and grab the data from the Child
+
+<div>
+    <h1 style="text-align: center;">Parent Component</h1>
+    <h2>{{childMessage}}</h2>
+</div>
+<hr/>
+<app-child (onSendRequest)="onReadData($event)" ></app-child>
+
+
+export class ParentComponent {
+
+  childMessage: string;
+
+  onReadData(event: any) {
+    this.childMessage = event
+  }
+
+}
+
+/////////////
+
+final code :
+
+Child:
+<div>
+    <h1 style="text-align: center;">Child Component</h1>
+    <div>
+        <input [(ngModel)]="message">
+    </div>
+    <div>
+        <button (click)="onSend()">Send To Parent</button>
+    </div>
+</div>
+
+
+export class ChildComponent implements OnInit {
+
+  message: string = "Good Value"
+  //event emitter Declaration
+  @Output()
+  onSendRequest = new EventEmitter<string>();
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+  onSend() {
+    alert('sending data to parent')
+    //emit data  -  next method in subject
+    this.onSendRequest.emit(this.message)
+  }
+
+}
+
+
+Parent:
+
+<div>
+    <h1 style="text-align: center;">Parent Component</h1>
+    <h2>{{childMessage}}</h2>
+</div>
+<hr/>
+<app-child (onSendRequest)="onReadData($event)" ></app-child>
+
+export class ParentComponent {
+
+  childMessage: string;
+  onReadData(event: any) {
+    this.childMessage = event
+  }
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
