@@ -1,25 +1,57 @@
 <h1>User Registration Form</h1>
 <div class="container">
     <!--todo: remove after checking-->
-    <p>{{user|json}}</p>
-    <form (ngSubmit)="onSubmit()">
-        <div class="form-group">
-            <label for="firstName">FirstName</label>
-            <input type="text" [(ngModel)]="user.firstName" name="firstName" class="form-control" id="firstName"
-                required>
-        </div>
-        <div class="form-group">
-            <label for="lastName">LastName</label>
-            <input type="text" [(ngModel)]="user.lastName" name="lastName" class="form-control" id="lastName" required>
-        </div>
-        <div class="form-group">
-            <label for="category">Category</label>
-            <select class="form-control" id="category" name="category" [(ngModel)]="user.category">
-                <option *ngFor="let option of category" [value]="option">{{option}}</option>
-            </select>
-        </div>
+    <div [hidden]="submitted">
+        <p>{{user|json}}</p>
+        <form #myform="ngForm" (ngSubmit)="onSubmit()">
 
-        <button type="submit" class="btn btn-success">Submit</button>
+            <div class="form-group">
+                <label for="firstName">FirstName</label>
+                <input type="text" #firstNameError="ngModel" [(ngModel)]="user.firstName" name="firstName"
+                    class="form-control" id="firstName" required>
+                <div [hidden]="firstNameError.valid || firstNameError.pristine" class="alert alert-danger">
+                    FirstName is required
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="lastName">LastName</label>
+                <input type="text" #lastNameError="ngModel" [(ngModel)]="user.lastName" name="lastName"
+                    class="form-control" id="lastName" required>
 
-    </form>
+                <div [hidden]="lastNameError.valid || lastNameError.pristine" class="alert alert-danger">
+                    lastName is required
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select class="form-control" id="category" name="category" [(ngModel)]="user.category">
+                    <option *ngFor="let option of category" [value]="option">{{option}}</option>
+                </select>
+            </div>
+
+            <button [disabled]="!myform.form.valid" type="submit" class="btn btn-success">Submit</button>
+
+        </form>
+    </div>
+    <div class="container" [hidden]="!submitted">
+        <h2>You submitted the following:</h2>
+        <div class="row">
+            <div class="col-xs-3">Id : </div>
+            <div class="col-xs-9  pull-left">{{ user.id }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">First Name : </div>
+            <div class="col-xs-9  pull-left">{{ user.firstName }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Last Name : </div>
+            <div class="col-xs-9 pull-left">{{ user.lastName }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Category : </div>
+            <div class="col-xs-9 pull-left">{{ user.category }}</div>
+        </div>
+        <br>
+        <button class="btn btn-primary" (click)="submitted=false">GoBack</button>
+    </div>
 </div>

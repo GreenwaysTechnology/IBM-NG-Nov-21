@@ -1869,8 +1869,848 @@ export class HighlightDirective {
 					Forms
 .............................................................................................
 
+Template Reference Variable #
+
+DOM Object :  Every HTML Element is Object called DOM object
+
+<h1> -object
+<div> - object
+
+How to access DOM object inside code(component/directive).
+
+1.inside component.
+  $event
+2.inside directive(Attribute)
+  ElementRef
+
+How to access DOM object inside template itself(across template)
+
+<div>
+ <h1 #myvar >Hello</h1>
+
+ <div> 
+    {{myvar.innerHTML}}
+ </div>
+
+</div>
+Forms are used to get input from the User.
+
+Types of Forms
+
+1.Template driven Forms
+2.Reactive forms
 
 
+Tempate Driven Forms:
+...................
+
+Steps:
+
+1.FormsModule
+
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+2.declare FormModel Object going to hold form field data
+
+export class PostFormModel{
+    constructor(public id: number, public title: string, public author: string){
+    }
+}
+
+3.Create Model Object inside component.
+
+export class AppComponent {
+  post: any;
+  constructor() {
+    this.post = new PostFormModel(Math.random(), 'Learn Angular', 'Misko')
+  }
+}
+
+Step 4 : 
+Create inital form Template
+ -Forms should have bootstrap style
+
+<div class="container">
+  <h1>Post Form</h1>
+  <form>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit</button>
+
+  </form>
+</div>
+
+
+Step 5:
+
+Data binding
+   Binding textbox(form controls) with Model Object
+   We have many ways
+  1.through instance variable,$event
+  2.through [(ngModel)]="post.title"
+   ngModel = > it is an object from "FormsModule"
+   ngModel it is dto object=>data transfering between view and component.
+
+//
+Form Control value property is bound with name property of input control.
+
+<input [(ngModel)]="post.title" name="title" type="text" class="form-control" id="title" required>
+
+    <form>
+       <!--TODO: Remove this once testing over-->
+       <pre>{{post | json}}</pre>
+      <div class="form-group">
+         <label for="title">Title</label>
+         <input [(ngModel)]="post.title" name="title" type="text" class="form-control" id="title" required>
+       </div>
+       <div class="form-group">
+         <label for="name">Name</label>
+         <input [(ngModel)]="post.author" name="author" type="text" class="form-control" id="name" required>
+       </div>
+   
+       <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+
+*****************************************************************************************
+					Vaildation
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Objects In the FormsModule:
+
+NgForm : 
+
+ It is object representation of "form" element.
+ Can be used to control form validations.
+ in order to access the NgForm object inside template. You have to use template reference
+
+<form #postForm> =>postForm points HTMLForm Object
+
+ngForm is Object which inherits HTMLForm
+
+class ngForm extends HTMLForm{
+  +extra behavior=>Ready made validation code
+  +form submission behviours
+}
+
+What is meaning of this code <form #postForm>?
+
+ HTMLFORMMobject ----postPorm
+
+dummy code for the above template
+ let postForm =  new HTMLForm();
+
+what we need
+ let postForm = new NgForm()
+
+<form #postForm="ngForm"> 
+
+
+The variable postForm is now a reference to the NgForm 
+directive that governs the form as a whole.
+
+The NgForm directive:
+
+What NgForm directive? You didn't add an NgForm directive before.
+
+Angular did. Angular automatically creates and attaches
+ an NgForm directive to the <form> tag.
+
+"The NgForm directive supplements the form element with additional features. 
+
+It holds the controls you created for the elements  with an "ngModel directive" and name attribute, and monitors their properties, including their validity.
+ 
+It also has its own valid property which is true only if every contained control is valid."
+
+Note: NgForm is built Object ,has more logic for simlifying our form handling process.
+
+********************************************************************************************
+********************************************************************************************
+NgModel :
+
+ 1.Transfering data between UI and Controller .
+
+NgModel not only for data transfer, which does so many other things beyond twoway data binding.
+
+Track control(form element) state and validity with ngModel:
+............................................................
+
+Form element states:
+
+Angular provides built-in css classes to track form control state"
+
+State 	                         Class if true 	  Class if false
+
+The control has been visited.  	  ng-touched 	    ng-untouched
+The control's value has changed.  ng-dirty 	    ng-pristine
+The control's value is valid. 	  ng-valid 	    ng-invalid
+
+State Tracking Steps:
+
+1.Look but don't touch.
+2.Click inside the name box, then click outside it.
+3.Add slashes to the end of the name.
+4.Erase the name.
+
+ng-untouched - if you dont touch
+ng-touched - if you touch
+ng-dirty - if you changed
+ng-invalid - if you remove all-empty field
+
+Step 6:
+
+Add custom CSS for visual feedback:
+
+Valid + Required - green Color
+Valid + optional - white color
+Invalid (required | optional) - red Color
+
+Angular Css:
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}
+
+****************************************************************************************
+
+Adding validation block to our code:
+...................................
+
+NgModel is Child Object of FormControl Object
+
+class  Input{
+ 
+}
+class NgModel extends Input{
+  //extra features : state tracking,enabling validation.
+}
+
+<input #Xx> -Here xxPoints only Input
+
+<input #Xx="ngModel"> -Here xx points ngModel
+
+      <input  [(ngModel)]="post.title" #errorMsg1="ngModel" name="title" type="text" class="form-control" id="title" required>
+
+Step 7: Add Error Block
+<div class="container">
+  <h1>Post Form</h1>
+  <form #postForm="ngForm">
+    <!--TODO: Remove this once testing over-->
+    <pre>{{post | json}}</pre>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input [(ngModel)]="post.title" #errorMsg1="ngModel" name="title" type="text" class="form-control" id="title"
+        required>
+      <div [hidden]="errorMsg1.valid || errorMsg1.pristine" class="alert alert-danger">
+        title is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input [(ngModel)]="post.author" #errorMsg2="ngModel" name="author" type="text" class="form-control" id="name"
+        required>
+      <div [hidden]="errorMsg2.valid || errorMsg2.pristine" class="alert alert-danger">
+        Author is required
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+
+  </form>
+</div>
+
+Step 7: Disabling submit button until the whole form is valid.
+*******************************************************************************************
+
+Disabling submit button in case any validation fails:
+
+  <button type="submit" class="btn btn-success" [disabled]="!postForm.form.valid">Submit</button>
+
+*******************************************************************************************
+
+
+Step 8:Adding combo box: Select Control
+
+
+export class PostFormModel {
+    constructor(public id: number, public title: string, public author: string, public category: string) {
+    }
+}
+export class AppComponent {
+  post: any;
+  //you may get  this from services
+  categories: Array<string> = ["User interface", "MicroServices", "Devops"];
+  constructor() {
+    this.post = new PostFormModel(Math.random(), 'Learn Angular', 'Misko', this.categories[0])
+  }
+}
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select class="form-control" id="category" name="category" 
+       [(ngModel)]="post.category">
+        <option *ngFor="let cat of categories"  [value]="cat">
+          {{cat}}
+        </option>
+      </select>
+    </div>
+////////////////////////////////////////////////////////////////////////////////////////////
+
+Step 9: How to submit Form? and show another page
+
+Add listener in the form tag.
+ <form #postForm="ngForm" (ngSubmit)="onSubmit()">
+
+
+<div class="container">
+  <h1>Post Form</h1>
+  <div [hidden]="submitted">
+    <form #postForm="ngForm" (ngSubmit)="onSubmit()">
+      <!--TODO: Remove this once testing over-->
+      <pre>{{post | json}}</pre>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input [(ngModel)]="post.title" #errorMsg1="ngModel" name="title" type="text" class="form-control" id="title"
+          required>
+        <div [hidden]="errorMsg1.valid || errorMsg1.pristine" class="alert alert-danger">
+          title is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input [(ngModel)]="post.author" #errorMsg2="ngModel" name="author" type="text" class="form-control" id="name"
+          required>
+        <div [hidden]="errorMsg2.valid || errorMsg2.pristine" class="alert alert-danger">
+          Author is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select class="form-control" id="category" name="category" [(ngModel)]="post.category">
+          <option *ngFor="let cat of categories" [value]="cat">
+            {{cat}}
+          </option>
+        </select>
+      </div>
+
+
+      <button type="submit" class="btn btn-success" [disabled]="!postForm.form.valid">Submit</button>
+    </form>
+  </div>
+
+  <!--Details Page-->
+  <div class="container" [hidden]="!submitted">
+    <h2>You submitted the following:</h2>
+    <div class="row">
+      <div class="col-xs-3">Id : </div>
+      <div class="col-xs-9  pull-left">{{ post.id }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3">Title : </div>
+      <div class="col-xs-9  pull-left">{{ post.title }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3">Author : </div>
+      <div class="col-xs-9 pull-left">{{ post.author }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-3">Category : </div>
+      <div class="col-xs-9 pull-left">{{ post.category }}</div>
+    </div>
+    <br>
+    <button class="btn btn-primary" (click)="submitted=false">GoBack</button>
+  </div>
+
+</div>
+
+import { Component } from '@angular/core';
+import { PostFormModel } from './post.form.model';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  post: any;
+  submitted: boolean = false;
+  //you may get  this from services
+  categories: Array<string> = ["User interface", "MicroServices", "Devops"];
+  constructor() {
+    this.post = new PostFormModel(Math.random(), 'Learn Angular', 'Misko', this.categories[0])
+  }
+  onSubmit(){
+     alert(JSON.stringify(this.post))
+     this.submitted = true;
+  }
+}
+
+
+export class PostFormModel {
+    constructor(public id: number, public title: string, public author: string, public category: string) {
+    }
+}
+.............................................................................................
+					 Services
+.............................................................................................
+					
+What is service ?
+
+ Service itself is object holding data and biz logic.
+ Service need to be accessed inside controller(component).
+
+
+Java -Spring -Dependency Injection
+
+class HelloService{
+
+}
+
+class HelloComponent {
+ private HelloService helloService;
+
+ //constructor injection
+  HelloComponent(HelloService helloService){
+      this.helloService =helloSerice
+   }
+ //setter injection
+  public void setHelloService(HelloService helloService){
+     this.helloService=HelloService
+  }
+}
+
+HelloService helloService =new HelloService();
+HelloComponent cmp = new HelloComponent(helloService)
+cmp.setHelloService(helloService);
+
+
+In Angular =>Typescript
+
+
+@Injectable()
+export class HelloService{
+	
+   //methods
+}
+
+@Component()
+export class HelloComponent {
+ //private HelloService helloService;
+ //constructor injection
+  constructor(private helloService:HelloService){
+     // this.helloService =helloSerice
+  }
+  
+}
+
+In module:
+
+providers: [HelloService]
+
+This angular takes cares
+let helloService =new HelloService();
+let cmp = new HelloComponent(helloService)
+
+........................................................................................................
+
+Angular Component/Directive Life Cycle method sequence:
+
+@Component()
+export class MyComponent {}
+
+new MyComponent()
+
+  1.constructor is called
+
+  2.ngOnChanges() -  only if any input properties are found
+
+  3.ngOnInit()  - used to initalize the state after component is mounted.
+		   used for data intialization,timers,websockets,ajax inital code.
+
+  ...
+
+  4.ngOnDestroy() - used to destroy resources allocated
+                    removing timers,unsubscribering observable
+.......................................................................................................
+
+import { Component, OnInit, SimpleChanges } from '@angular/core';
+
+@Component({
+  selector: 'app-cmplifecycle',
+  templateUrl: './cmplifecycle.component.html',
+  styles: [
+  ]
+})
+export class CmplifecycleComponent implements OnInit {
+  counter: number = 1;
+
+  constructor() {
+    console.log('CmplifecycleComponent- constructor is called')
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      const chng = changes[propName];
+      const cur = JSON.stringify(chng.currentValue);
+      const prev = JSON.stringify(chng.previousValue);
+
+    }
+    console.log('CmplifecycleComponent- ngOnchanges')
+  }
+  ngOnInit(): void {
+    console.log('CmplifecycleComponent -ngOnInit is called')
+  }
+  increment() {
+    this.counter++;
+  }
+  //resource deallocation code
+  ngOnDestroy() {
+    console.log('CmplifecycleComponent -ngOnDestroy is called')
+  }
+
+}
+<div>
+    <h1>Parent Component</h1>
+    <app-child [counter]="counter" ></app-child>
+    <button (click)="increment()">increment</button>
+</div>
+
+.........................
+
+
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+
+@Component({
+  selector: 'app-child',
+  templateUrl: './child.component.html',
+  styles: [
+  ]
+})
+export class ChildComponent implements OnInit {
+  @Input()
+  counter: number = 0;
+
+  constructor() {
+    console.log('Child Component constructor is called')
+  }
+
+  //called only if component receives props from the parent component
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      const chng = changes[propName];
+      const cur = JSON.stringify(chng.currentValue);
+      const prev = JSON.stringify(chng.previousValue);
+      console.log(chng)
+    }
+    console.log('ChildComponent- ngOnchanges')
+  }
+
+  //only one time
+  ngOnInit(): void {
+    console.log('ChildComponent -ngOnInit is called')
+  }
+
+}
+<p>child works!</p>
+..............................................................................................
+
+Service : Object creation and use
+
+import { Injectable } from "@angular/core";
+
+
+@Injectable({
+    providedIn: 'root' // we tell the angular that use "root injector to create object"
+})
+export class GreetingService {
+    constructor() {
+
+    }
+    //methods
+    public sayHello(): string {
+        return "Hello Service!!";
+    }
+    public sayHai(): string {
+        return "Hai"
+    }
+    public sayGreet(): string {
+        return "Greet";
+    }
+
+}
+
+import { Component, OnInit } from '@angular/core';
+import { GreetingService } from './greeing.service';
+
+@Component({
+  selector: 'app-greeting',
+  templateUrl: './greeting.component.html',
+  styles: [
+  ]
+})
+export class GreetingComponent implements OnInit {
+
+  // message:string = "Hello";
+  message: string = "";
+  hai:string = ""
+  greet:string = ""
+  //constructor injection
+  constructor(private greetingService: GreetingService) {
+    // // console.log(this.helloService.sayHello());
+    // this.message = this.greetingService.sayHello();
+    // this.hai = this.greetingService.sayHai();
+    // this.greet = this.greetingService.sayGreet();
+  }
+
+  ngOnInit(): void {
+    this.message = this.greetingService.sayHello();
+    this.hai = this.greetingService.sayHai();
+    this.greet = this.greetingService.sayGreet();
+  }
+
+}
+.......................................................................................................
+
+Services can take other service as dependency
+.............................................
+
+@Injectable({providedIn:'root'})
+export class Logger {
+
+}
+
+@Injectable({
+    providedIn: 'root' // we tell the angular that use "root injector to create object"
+})
+export class GreetingService {
+    constructor(private logger:Logger) {
+
+    }
+    //methods
+    public sayHello(): string {
+      
+        return "Hello Service!!";
+    }
+    public sayHai(): string {
+        return "Hai"
+    }
+    public sayGreet(): string {
+        return "Greet";
+    }
+
+}
+
+.......................................................................................................
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LoggerService {
+
+  constructor() { }
+
+  private messages: string[] = [];
+
+  add(message: string) {
+    this.messages.push(message);
+  }
+  fetch(): string[] {
+    return this.messages;
+  }
+
+  clear() {
+    this.messages = [];
+  }
+}
+
+greetingservice
+import { Injectable } from "@angular/core";
+import { LoggerService } from "../util/logger.service";
+
+
+@Injectable({
+    providedIn: 'root' // we tell the angular that use "root injector to create object"
+})
+export class GreetingService {
+    //GreetingService has LoggerService dependency
+    constructor(private logger: LoggerService) { }
+    //methods
+    public sayHello(): string {
+        this.logger.add('SayHello method  is called')
+        return "Hello Service!!";
+    }
+    public sayHai(): string {
+        this.logger.add('sayHai method  is called')
+        return "Hai"
+    }
+    public sayGreet(): string {
+        this.logger.add('sayGreet method  is called')
+        return "Greet";
+    }
+
+}
+...........
+
+Component
+import { Component, OnInit } from '@angular/core';
+import { LoggerService } from '../util/logger.service';
+import { GreetingService } from './greeing.service';
+
+@Component({
+  selector: 'app-greeting',
+  templateUrl: './greeting.component.html',
+  styles: [
+  ]
+})
+export class GreetingComponent implements OnInit {
+
+  // message:string = "Hello";
+  message: string = "";
+  hai: string = ""
+  greet: string = ""
+  logMessages: string[] = [];
+  //constructor injection
+  constructor(private greetingService: GreetingService, private logger: LoggerService) {
+    // // console.log(this.helloService.sayHello());
+    // this.message = this.greetingService.sayHello();
+    // this.hai = this.greetingService.sayHai();
+    // this.greet = this.greetingService.sayGreet();
+  }
+
+  ngOnInit(): void {
+    this.message = this.greetingService.sayHello();
+    this.logMessages=this.logger.fetch()
+    this.hai = this.greetingService.sayHai();
+    this.logMessages=this.logger.fetch()
+    this.greet = this.greetingService.sayGreet();
+    this.logMessages=this.logger.fetch()
+
+  }
+
+}
+........................................................................................................
+..............................................................................................
+				 Types of services
+
+1.Sync services
+  blocking services which blocks the current thread, so that ui will be freezed until the data
+or result is available.
+ 
+2.Async services
+  Non blocking
+  the task which wont block the current thread.
+  The computation will be done in other threads, once the task is over the result will be handed over to main thread.
+
+
+How to implement async programming in js(angular)?
+
+1.callback pattern - core pattern
+2.Promise pattern - wrapper for callbacks
+3.Reactive programming-rxjs
+
+
+callback pattern :
+ passing function as parameter to another function, which gets called once async operation is completed
+
+What could be async operation:
+
+1.ajax call
+2.timers
+3.websockets
+
+
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CallbackpatternService {
+  constructor() { }
+
+  //biz method sync method
+  public getValue(): number {
+    return 10;
+  }
+  //biz method : async method : timer
+  public delayValue(callback: any): void {
+    //timer : Return "Hello" message to the caller after 5ms .
+    setTimeout(callback, 5000, 100);
+  }
+
+
+}
+import { Component, OnInit } from '@angular/core';
+import { CallbackpatternService } from './callbackpattern.service';
+
+@Component({
+  selector: 'app-callbackpattern',
+  templateUrl: './callbackpattern.component.html',
+  styles: [
+  ]
+})
+export class CallbackpatternComponent implements OnInit {
+
+  syncValue: number = 0;
+  asyncValueCb: number = 0;
+  loading: boolean = true;
+  status: string = "loding..."
+
+  constructor(private cbService: CallbackpatternService) { }
+
+  ngOnInit(): void {
+    //sync call 
+    this.syncValue = this.cbService.getValue();
+    //async call
+    this.cbService.delayValue((value: number) => {
+      this.asyncValueCb = value;
+      this.loading = false;
+    });
+
+  }
+
+}
+<div>
+    <h1>Callback Pattern</h1>
+    <h2>Sync Value : {{syncValue}}</h2>
+    <div *ngIf="loading; else notLoading  ">
+        <h2>{{status}}</h2>
+    </div>
+    <ng-template #notLoading>
+         <h3>{{asyncValueCb}}</h3>
+    </ng-template>
+</div>
+........................................................................................................
 
 
 

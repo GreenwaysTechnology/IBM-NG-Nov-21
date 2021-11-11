@@ -1,0 +1,10 @@
+<div>
+    <h1>Callback Pattern</h1>
+    <h2>Sync Value : {{syncValue}}</h2>
+    <div *ngIf="loading; else notLoading  ">
+        <h2>{{status}}</h2>
+    </div>
+    <ng-template #notLoading>
+         <h3>{{asyncValueCb}}</h3>
+    </ng-template>
+</div>

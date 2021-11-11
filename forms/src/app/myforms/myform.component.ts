@@ -12,6 +12,7 @@ export class MyformComponent implements OnInit {
   //model object
   category: Array<string> = ["admin", "guest", "premium", "visitor"];
   user = new User(Math.random(), "Subramanian", "Murugan", this.category[3]);
+  submitted:boolean= false;
   constructor() { }
 
 
@@ -19,6 +20,7 @@ export class MyformComponent implements OnInit {
   }
   onSubmit() {
     console.log(this.user);
+    this.submitted =  true;
   }
 
 }
