@@ -2712,6 +2712,451 @@ export class CallbackpatternComponent implements OnInit {
 </div>
 ........................................................................................................
 
+Promises:
+
+=>It is a design pattern to abstract callback pattern.
+=>We dont need to pass function as parameter
+
+
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PromisepatternService {
+
+  constructor() { }
+
+  //async code with promises
+  getValue(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, 5000, 1000)
+    });
+  }
+
+}
+...................................................................................................
+
+import { Component, OnInit } from '@angular/core';
+import { PromisepatternService } from './promisepattern.service';
+
+@Component({
+  selector: 'app-promisespattern',
+  templateUrl: './promisespattern.component.html',
+  styles: [
+  ]
+})
+export class PromisespatternComponent implements OnInit {
+
+  value: number = 0;
+  constructor(private promiseService: PromisepatternService) { }
+
+  ngOnInit(): void {
+    this.promiseService.getValue()
+      .then(value => {
+        this.value = value;
+      }).catch(err => console.log(err))
+  }
+
+}
+<div>
+    <h1>Promise Value {{value}}</h1>
+</div>
+........................................................................................................
+					Reactive programming- Rxjs
+	
+
+What is Reactive programming?
+  An API for asynchronous programming with observable streams.
+Reactive Programming is new Programming style  which coimbines
+->Observer Design pattern
+->Iterator Design pattern
+->Functional Programming principles
+
+Why Reactive Programming?
+
+ Data Transfer and Data Processing among system
+
+
+Programming Type with respect data transfer
+
+1.PULL Based Programming
+   The One Object ask the Other Object
+
+The Requester is called "Client/Subscriber"
+
+The Giver is called "Provider/Publisher"
+
+Client always asks data, Provider always gives data.
+
+Client when ever requet, the Provider will give data.
+
+
+
+2.PUSH based Programming
+
+Where publisher sends the data without client request.
+
+=>Event Driven programming model where publisher sends events , where subscriber listens for the event
+
+Publihser will send three types of events
+
+1.data event
+2.error event
+3.complete event
+........................................................................................................
+
+Characteristics of reactive programming:
+
+1.data is streammed from publisher to subscriber , so that performance is increased
+2.stream can be observed - data processing is possible
+3.reactive is more declarative - more readable, less code. 
+4.abstract low level concurrency implemenations- multi threading.....
+.......................................................................................................
+
+Reactive Programming is platform ,language independant.
+
+
+rxjava-java
+rxjs -javascript
+etc...
+Java script + Reactive Programming = rxjs
+
+What is rxjs?
+
+rxjs is javascript lib for writing reactive programming in js echo system.
+
+rxjs and angular:
+
+angular uses rxjs for data streaming and processing in async way.
+
+angular uses rxjs in many places
+ - http programming
+ - routers
+ - child to parent communication.
+........................................................................................................
+					Rxjs Implementation
+........................................................................................................
+
+Core concepts In rxjs
+
+1.Observables
+2.Observer - Subscriber
+3.Operators - methods
+4.Subscription - bridge between Observable and Observer
+5.Subjects
+6.Scheduler
+
+
+Objects:
+1.Publisher
+2.Subscriber
+
+API (Operators /methods/function) for Processing Streaming
+
+Publisher Objects:
+
+1.Observable
+2.Subject
+
+........................................................................................................
+					Angular and Rxjs
+
+Service : Publisher
+
+Component: Listener/Subscriber
+
+
+
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ObservableService {
+
+  constructor() { }
+
+  //method which returns an observable
+  public createSimpleStream(): Observable<number> {
+    return new Observable(observer => {
+      //push value / error / complete
+      observer.next(10) // push value into stream
+      observer.next(20)
+      observer.next(30)
+      observer.next(40)
+      observer.next(50)
+      observer.complete();
+    });
+  }
+  //in 
+
+
+}
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ObservableService } from './observable.service';
+
+@Component({
+  selector: 'app-observable',
+  templateUrl: './observable.component.html',
+  styles: [
+  ]
+})
+export class ObservableComponent implements OnInit {
+
+  stream$: Array<number> = [];
+
+  //! => definit assignment assertion property
+  subscription!: Subscription;
+
+  constructor(private obsService: ObservableService) { }
+  //listener who listens for data
+
+  ngOnInit(): void {
+    // this.obsService.createSimpleStream().subscribe(data => {
+    //   console.log(data);
+    //   this.stream$.push(data);
+    // }, error => {
+    //   console.log('error')
+    // }, () => {
+    //   console.log('completed')
+    // });
+    //subscribe({next: {},complete:{},error:{}})
+    this.subscription = this.obsService.createSimpleStream().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.stream$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+
+  }
+  //called once the when the component is destroyed
+  ngOnDestory() {
+    //remove Observable from the memory
+    this.subscription.unsubscribe();
+  }
+
+}
+........................................................................................................
+
+Operators:
+.........
+Operators are functions. There are two kinds of operators:
+
+
+
+1.Pipeable Operators are the kind that can be piped to Observables using the syntax observableInstance.pipe(operator()). 
+  => For data Processing.
+
+2.Creation Operators 
+	are the other kind of operator, which can be called as standalone functions to create a new Observable
+
+  Creation operators are utiltity operators which is used to create stream based on data sources.
+
+Data Sources:
+ - sequenece primitives
+ - array
+ - map
+ - Promises
+ - DOM events
+
+........................................................................................................
+
+Operators : of,from
+
+import { Injectable } from '@angular/core';
+import { from, Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ObservableService {
+
+  constructor() { }
+
+  //method which returns an observable
+  public createSimpleStream(): Observable<number> {
+    return new Observable(observer => {
+      //push value / error / complete
+      observer.next(10) // push value into stream
+      observer.next(20)
+      observer.next(30)
+      observer.next(40)
+      observer.next(50)
+      observer.complete();
+    });
+  }
+  //creational operators : of
+  public createOf(): Observable<number> {
+    return of(10, 20, 30, 40, 50) // ob
+  }
+  //creational operator : from
+
+  public createFrom(): Observable<number> {
+    return from([10, 20, 30, 40, 50])
+  }
+
+
+}
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ObservableService } from './observable.service';
+
+@Component({
+  selector: 'app-fromobservable',
+  templateUrl: './fromobservable.component.html',
+  styles: [
+  ]
+})
+export class FromobservableComponent implements OnInit {
+  stream$: Array<number> = [];
+  subscription!: Subscription;
+
+  constructor(private obsService: ObservableService) { }
+
+  ngOnInit(): void {
+    this.subscription = this.obsService.createFrom().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.stream$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+  }
+  ngOnDestory() {
+    //remove Observable from the memory
+    this.subscription.unsubscribe();
+  }
+}
+<div>
+    <h1>Observable - From</h1>
+    <ul>
+        <li *ngFor="let num of stream$">{{num}}</li>
+    </ul>
+</div>
+.........
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ObservableService } from './observable.service';
+
+@Component({
+  selector: 'app-ofobservable',
+  templateUrl: './ofobservable.component.html',
+  styles: [
+  ]
+})
+export class OfobservableComponent implements OnInit {
+  stream$: Array<number> = [];
+  subscription!: Subscription;
+
+  constructor(private obsService: ObservableService) { }
+
+  ngOnInit(): void {
+    this.subscription = this.obsService.createOf().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.stream$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+  }
+  //called once the when the component is destroyed
+  ngOnDestory() {
+    //remove Observable from the memory
+    this.subscription.unsubscribe();
+  }
+
+}
+<div>
+    <h1>Observable - Of</h1>
+    <ul>
+        <li *ngFor="let num of stream$">{{num}}</li>
+    </ul>
+</div>
+.......................................................................................................
+				Without Subscribe method how to  access data
+.......................................................................................................
+
+We have a special pipe called async
+
+import { Injectable } from '@angular/core';
+import { from, Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ObservableService {
+
+  constructor() { }
+  //Return an array 
+  public createArray(): Observable<number[]> {
+    return of([10, 20, 30, 40, 50])
+  }
+
+
+}
+import { Component, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { ObservableService } from './observable.service';
+
+@Component({
+  selector: 'app-fromobservable',
+  templateUrl: './fromobservable.component.html',
+  styles: [
+  ]
+})
+export class FromobservableComponent implements OnInit {
+  stream$: Array<number> = [];
+  subscription!: Subscription;
+  //For Async Pipe
+  streamAsync!: Observable<number[]>;
+
+  constructor(private obsService: ObservableService) { }
+
+  ngOnInit(): void {
+    //with subscribe method
+    this.subscription = this.obsService.createFrom().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.stream$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+
+    //
+    this.streamAsync = this.obsService.createArray()
+
+  }
+  ngOnDestory() {
+    //remove Observable from the memory
+    this.subscription.unsubscribe();
+  }
+}
+<div>
+    <h1>Observable - From</h1>
+    <ul>
+        <li *ngFor="let num of stream$">{{num}}</li>
+    </ul>
+
+    <h1>Observable - From With async</h1>
+    <ul>
+        <li *ngFor="let val of streamAsync | async">{{val}}</li>
+    </ul>
+</div>
+
+
+
 
 
 

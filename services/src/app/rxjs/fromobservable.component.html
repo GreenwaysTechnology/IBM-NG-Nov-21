@@ -1,0 +1,11 @@
+<div>
+    <h1>Observable - From</h1>
+    <ul>
+        <li *ngFor="let num of stream$">{{num}}</li>
+    </ul>
+
+    <h1>Observable - From With async</h1>
+    <ul>
+        <li *ngFor="let val of streamAsync | async">{{val}}</li>
+    </ul>
+</div>
