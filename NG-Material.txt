@@ -3155,21 +3155,494 @@ export class FromobservableComponent implements OnInit {
     </ul>
 </div>
 
+.............................................................................................
+				  Data Processing 
+
+
+Functional Programming:
+
+->Pure function
+    The function which does not modify the original data state.
+   
+->immutablity
+    The function which returns always new data.
+
+
+//this impure function and mutates the original object
+function update(profile , city){
+   
+   //logic update:
+   profile.city = city;
+   return profile
+
+}
+
+const profile= {
+ id:2
+ name:'foo',
+ city:'bar'
+}
+
+const result = update(profile,'coimbatore')
 
 
 
+//pure function , having immutable logic
+
+function update(profile , city){
+   
+   //logic update:
+   return {
+       id:profile.id,
+       name:profile.name
+       city: city
+   }
+
+}
+
+const profile= {
+ id:2
+ name:'foo',
+ city:'bar'
+}
+
+const result = update(profile,'coimbatore')
 
 
+Every rxjs operation is pure function and always returns new object(immutable object).
+
+  Observable = of(somedata)
+
+  of(somedata).pipe(map(somelogic)=>new Observable, other operator=>new Observable())
 
 
+Stream Types:
+
+1.up Stream
+2.down stream
 
 
+<div>
+    <h1>Data processing-Using Map</h1>
+    <ul>
+        <li *ngFor="let num of stream$">{{num}}</li>
+    </ul>
+
+    <h1>Data processing-Using Filter</h1>
+    <ul>
+        <li *ngFor="let num of streamFilter$">{{num}}</li>
+    </ul>
+</div>
+
+import { Component, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { DataProcessingService } from './dataprocessing.service';
+
+@Component({
+  selector: 'app-dataprocessing',
+  templateUrl: './dataprocessing.component.html',
+  styles: [
+  ]
+})
+export class DataprocessingComponent implements OnInit {
+  stream$: Array<number> = [];
+
+  streamFilter$:Array <number> =[]
+  subscription!: Subscription;
+  //For Async Pipe
+  streamAsync!: Observable<number[]>;
+
+  constructor(private obsService: DataProcessingService) { }
+
+  ngOnInit(): void {
+    this.subscription = this.obsService.transformUsingMap().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.stream$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+
+    //filtering data
+    this.obsService.filterByValue().subscribe({
+      next: (data: number) => {
+        console.log(data)
+        this.streamFilter$.push(data);
+      },
+      complete: () => { },
+      error: () => { }
+    });
+
+  }
+
+  ngOnDestory() {
+    //remove Observable from the memory
+    this.subscription.unsubscribe();
+  }
+
+}
+import { Injectable } from "@angular/core";
+import { Observable, of, range, filter } from "rxjs";
+import { map,takeLast } from 'rxjs/operators'
+
+@Injectable({
+    providedIn: 'root'
+})
+export class DataProcessingService {
+    constructor() { }
+
+    public transformUsingMap(): Observable<number> {
+        //data processing operators
+        return range(1, 20).pipe(map(x => x * 2), map(x => x * 4));
+    }
+
+    public filterByValue(): Observable<number> {
+        return range(1, 25).pipe(filter(x => x % 2 === 1),takeLast(5))
+    }
+
+}
+..............................................................................................
+
+..............................................................................................						Multi cast
+..............................................................................................
+
+There are two ways to broadcast values 
+
+1.cold stream
+2.hot stream
 
 
+1.cold stream
+
+1.Observable that doesn’t emit items until a subscriber subscribes.
+
+2.If we have more than one subscriber, then observable will 
+emit sequence of items to all subscribers one by one.
+
+3.Each subscriber get "fresh copy of the data from the begining".
+
+4.Most of Observerables are Cold.
+..............................................................................................
+
+import { Injectable } from '@angular/core';
+import { interval, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ColdstreamService {
+
+  constructor() { }
+
+  //cold stream api
+  public emitValue(): Observable<number> {
+    return interval(1000).pipe(tap(() => console.log('emitting')));
+  }
+}
+
+Subscriber1
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ColdstreamService } from './coldstream.service';
+
+@Component({
+  selector: 'app-cstreamsub1',
+  templateUrl: './cstreamsub1.component.html',
+  styles: [
+  ]
+})
+export class Cstreamsub1Component implements OnInit {
+  values: number[] = [];
+  subscription!: Subscription;
+
+  constructor(public coldService: ColdstreamService) { }
+  ngOnInit(): void {
+    this.subscription = this.coldService.emitValue().subscribe(data => {
+      this.values.push(data);
+    })
+  }
+  ngOnDestory() {
+    console.log('component has been destroyed')
+    this.subscription.unsubscribe()
+  }
+
+}
+<h1>Subscriber-1</h1>
+<ul>
+    <li *ngFor="let i of values">
+        {{i}}
+    </li>
+</ul>
+
+...
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ColdstreamService } from './coldstream.service';
+
+@Component({
+  selector: 'app-cstreamsub2',
+  templateUrl: './cstreamsub2.component.html',
+  styles: [
+  ]
+})
+export class Cstreamsub2Component implements OnInit {
+  values: number[] = [];
+  subscription!: Subscription;
+
+  constructor(public coldService: ColdstreamService) { }
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.subscription = this.coldService.emitValue().subscribe(data => {
+        this.values.push(data);
+      })
+    },10000)
+
+  }
+  ngOnDestory() {
+    console.log('component has been destroyed')
+    this.subscription.unsubscribe()
+  }
 
 
+}
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { ColdstreamService } from './coldstream.service';
+
+@Component({
+  selector: 'app-cstreamsub2',
+  templateUrl: './cstreamsub2.component.html',
+  styles: [
+  ]
+})
+export class Cstreamsub2Component implements OnInit {
+  values: number[] = [];
+  subscription!: Subscription;
+
+  constructor(public coldService: ColdstreamService) { }
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.subscription = this.coldService.emitValue().subscribe(data => {
+        this.values.push(data);
+      })
+    },10000)
+
+  }
+  ngOnDestory() {
+    console.log('component has been destroyed')
+    this.subscription.unsubscribe()
+  }
 
 
+}
+<h1>Subscriber-2</h1>
+<ul>
+    <li *ngFor="let i of values">
+        {{i}}
+    </li>
+</ul>
+.........................................................................................	
+					Hot Stream
 
+import { Injectable } from '@angular/core';
+import { interval, Observable } from 'rxjs';
+import { tap, map, share } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class HotstreamService {
+
+  hotStream!: Observable<number>;
+  
+  constructor() {
+    //emit value in 1s
+    const source = interval(1000);
+    //log side effect, emit result
+    const stream = source.pipe(
+      tap(() => console.log('***starts***')),
+      map(i => i * 2),
+      share()
+    );
+    //make it hot.
+    //share observable among subscribers
+    this.hotStream = stream.pipe(share());
+  }
+  public emitValue(): Observable<number> {
+      return this.hotStream;
+  }
+
+
+}
+<h1>Hot Subscriber-1</h1>
+<ul>
+    <li *ngFor="let i of values">
+        {{i}}
+    </li>
+</ul>
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { HotstreamService } from './hotstream.service';
+
+@Component({
+  selector: 'app-hotstreamsub1',
+  templateUrl: './hotstreamsub1.component.html',
+  styles: [
+  ]
+})
+export class Hotstreamsub1Component implements OnInit {
+  subscription!: Subscription;
+  values: number[] = [];
+
+  constructor(private hotStream:HotstreamService) { }
+
+  ngOnInit(): void {
+    this.subscription = this.hotStream.emitValue().subscribe(data => {
+      this.values.push(data);
+    })
+
+  }
+  ngOnDestory() {
+    console.log('component has been destroyed')
+    this.subscription.unsubscribe()
+  }
+
+}
+
+<h1>Hot Subscriber-2</h1>
+<ul>
+    <li *ngFor="let i of values">
+        {{i}}
+    </li>
+</ul>
+
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { HotstreamService } from './hotstream.service';
+
+@Component({
+  selector: 'app-hotstreamsub2',
+  templateUrl: './hotstreamsub2.component.html',
+  styles: [
+  ]
+})
+export class Hotstreamsub2Component implements OnInit {
+  subscription!: Subscription;
+  values: number[] = [];
+
+  constructor(private hotStream: HotstreamService) { }
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.subscription = this.hotStream.emitValue().subscribe(data => {
+        console.log(data)
+        this.values.push(data);
+      })
+    }, 10000);
+
+  }
+  ngOnDestory() {
+    console.log('component has been destroyed')
+    this.subscription.unsubscribe()
+  }
+
+}
+..........................................................................................
+Subject:
+
+What is a Subject?  :create the hot observable from scratch
+  
+ In RxJS Subject is a special type of Observable that allows values to be multicasted to many Observers.
+
+While plain Observables are unicast (each subscribed Observer owns an independent execution of the Observable), Subjects are multicast.
+
+"each subscribed Observer owns an independent execution of the Observable"
+   =>Every Subscribers has its own independent copy of the Object.
+   lets say 10 subscribers, 10 Observable copy is maintained.
+
+"A Subject is a special type of Observable which shares a single execution path among observers"
+
+"You can think of this as a single speaker talking at a microphone in a room full of people. Their message (the subject) is being delivered to many (multicast) people (the observers) at once. This is the basis of multicasting. Typical observables would be comparable to a 1 on 1 conversation".
+
+There are 4 variants of subjects:
+
+1.Subject - No initial value or replay behavior.
+2.AsyncSubject - Emits latest value to observers upon completion.
+3.BehaviorSubject - Requires an initial value and emits its current value (last emitted item) to new subscribers.
+4.ReplaySubject - Emits specified number of last emitted values (a replay) to new subscribers.
+...........................................................................................
+
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+
+
+@Injectable({
+    providedIn: 'root'
+})
+export class SubjectService {
+
+    private behaviour = new BehaviorSubject(10);
+    constructor() { }
+
+    public broadCast(): BehaviorSubject<number> {
+      return this.behaviour;
+    }
+
+}
+
+import { Component, OnInit } from '@angular/core';
+import { SubjectService } from './subject.service';
+
+@Component({
+  selector: 'app-subjectone',
+  templateUrl: './subjectone.component.html',
+  styles: [
+  ]
+})
+export class SubjectoneComponent implements OnInit {
+  
+  value!: number;
+  constructor(private subject: SubjectService) { }
+
+  ngOnInit(): void {
+    this.subject.broadCast().subscribe((data) => {
+      this.value = data;
+    });
+  }
+  public emitValue() {
+    this.subject.broadCast().next(400)
+  }
+
+}
+
+<h1>Subject-1 => {{value}}</h1>
+<button (click)="emitValue()">BroadCast To All Component</button>
+import { Component, OnInit } from '@angular/core';
+import { SubjectService } from './subject.service';
+
+@Component({
+  selector: 'app-subjecttwo',
+  templateUrl: './subjecttwo.component.html',
+  styles: [
+  ]
+})
+export class SubjecttwoComponent implements OnInit {
+   value!: number;
+  constructor(private subject: SubjectService) { }
+
+  ngOnInit(): void {
+    this.subject.broadCast().subscribe((data) => {
+      this.value = data;
+    });
+  }
+}
+
+<h1>Subject-2 => {{value}}</h1>
+..............................................................................................					HTTP Programming
+.............................................................................................
 
 
