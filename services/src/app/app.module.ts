@@ -6,6 +6,7 @@ import { GreetingsModule } from './greetings/greetings.module';
 import { CmplifecyleModule } from './cmplifecyle/cmplifecyle.module';
 import { AsyncservicesModule } from './asyncservices/asyncservices.module';
 import { RxjsModule } from './rxjs/rxjs.module';
+import { HttpprogrammingModule } from './httpprogramming/httpprogramming.module';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { RxjsModule } from './rxjs/rxjs.module';
     GreetingsModule,
     CmplifecyleModule,
     AsyncservicesModule,
-    RxjsModule
+    RxjsModule,
+    HttpprogrammingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

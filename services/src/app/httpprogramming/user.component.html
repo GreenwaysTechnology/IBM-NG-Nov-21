@@ -1,0 +1,19 @@
+<div>
+    <!-- <h1>FindAll-GET</h1>
+    <div *ngFor="let user of users |async">
+        <h2>Id : {{user?.id ?? 0}}</h2>
+        <h2>Name : {{user?.name ?? "name"}}</h2>
+        <h2>User Name : {{user?.username ?? "username"}}</h2>
+        <h2>Email : {{user?.email ?? "email"}}</h2>
+    </div> -->
+    <h1>Find By Id</h1>
+    <input [(ngModel)]="id" />
+    <button (click)="findById()">FindById</button>
+
+    <div>
+        <h2>Id : {{user?.id ?? 0}}</h2>
+        <h2>Name : {{user?.name ?? "name"}}</h2>
+        <h2>User Name : {{user?.username ?? "username"}}</h2>
+        <h2>Email : {{user?.email ?? "email"}}</h2>
+    </div> -
+</div>

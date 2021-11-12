@@ -3646,3 +3646,552 @@ export class SubjecttwoComponent implements OnInit {
 .............................................................................................
 
 
+
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { User } from "../types/user.type";
+
+
+
+@Injectable({
+    providedIn: 'root'
+})
+export class UserService {
+    constructor(private http: HttpClient) { }
+
+    public findAll(): Observable<User[]> {
+        const url = 'http://localhost:3000/users';
+        return this.http.get<User[]>(url)
+    }
+
+}
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { User } from '../types/user.type';
+import { UserService } from './user.service';
+
+@Component({
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styles: [
+  ]
+})
+export class UserComponent implements OnInit {
+
+  users!: Observable<User[]>
+
+  constructor(private userService: UserService) { }
+
+  ngOnInit(): void {
+    this.users = this.userService.findAll();
+  }
+
+}
+<div>
+    <div *ngFor="let user of users |async">
+        <h2>Id : {{user?.id ?? 0}}</h2>
+        <h2>Name : {{user?.name ?? "name"}}</h2>
+        <h2>User Name : {{user?.username ?? "username"}}</h2>
+        <h2>Email : {{user?.email ?? "email"}}</h2>
+    </div>
+</div>
+..............................................................................................
+
+.............................................................................................
+				HTTP Communication
+............................................................................................
+
+in order to make http calls with rest api servers,js offers an object called "XMLHTTPRequest"
+
+But frameworks provide abstraction over XHR object.
+
+Angular provides XHR Abstraction - @angular/common/http
+
+Angular XHR is powered with Reactive -  XHR + REACTIVE - XHR +Streaming
+
+
+HTTP MOdule:
+
+common/http :
+
+HttpClientModule :
+  This is moudle having all http related apis
+
+This HttpClientModule must be injected before interacting with http end points
+
+HttpClientModule is injected into shared module in general
+
+
+Steps:
+ng g m httpprogramming --module=app
+
+
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+
+
+@NgModule({
+  declarations: [],
+  imports: [
+    CommonModule
+  ]
+})
+export class HttpprogrammingModule { }
+
+
+............................
+
+Back end setup:
+..............
+create json server 
+start server
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { User } from '../types/user.type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+
+  constructor(private http: HttpClient) { }
+
+  //service api
+  public findAll(): Observable<User[]> {
+    const url = 'http://localhost:3000/users';
+    return this.http.get<User[]>(url).pipe();
+  }
+
+}
+import { Component, OnInit } from '@angular/core';
+import { User } from '../types/user.type';
+import { UserService } from './user.service';
+
+@Component({
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styles: [
+  ]
+})
+export class UserComponent implements OnInit {
+
+  users!: Array<User>;
+  constructor(private userService: UserService) { }
+
+  ngOnInit(): void {
+    this.userService.findAll().subscribe(users => {
+      this.users = users;
+    });
+  }
+
+}
+<div>
+    <h1>Users</h1>
+    <ul>
+        <li *ngFor="let user of users">
+            <span>{{user.id}} {{user.name}}</span>
+        </li>
+    </ul>
+</div>
+............................................................................................
+				 Error handling,resilence,add other api
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, retry, tap } from 'rxjs/operators';
+import { User } from '../types/user.type';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+
+  constructor(private http: HttpClient) { }
+
+  //service api
+  public findAll(): Observable<User[]> {
+
+    const url = `${environment.url}/users`;
+    return this.http.get<User[]>(url).pipe(
+      retry(5),
+      // catchError(() => of<User[]>([{ id: 0, name: 'foo' }])
+      catchError(this.handleError<User[]>('findAll-users', this.fallback()))
+    );
+  }
+  private fallback() {
+    return [{ id: 0, name: 'foo' }];
+  }
+
+  findById(id: number): Observable<User> {
+    const url = `${environment.url}/users/${id}`;
+    return this.http.get<User>(url).pipe(
+      tap(() => console.log(`fetched user id = ${id}`)),
+      catchError(this.handleError<User>(`findByid id=${id}`))
+    )
+  }
+  //generic error handler
+  private handleError<T>(operation = "operation", result?: T) {
+    return (error: any): Observable<T> => {
+      //console.error(error);
+      return of(result as T);
+    }
+  }
+}
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { User } from '../types/user.type';
+import { UserService } from './user.service';
+
+@Component({
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styles: [
+  ]
+})
+export class UserComponent implements OnInit {
+
+  users!: Array<User>;
+  user!: Observable<User>;
+  constructor(private userService: UserService) { }
+
+  ngOnInit(): void {
+    this.userService.findAll().subscribe(users => {
+      this.users = users;
+    });
+  }
+  showUserByid() {
+    this.user = this.userService.findById(13);
+  }
+
+}
+<div>
+    <h1>Users</h1>
+    <ul>
+        <li *ngFor="let user of users">
+            <span>{{user.id}} {{user.name}}</span>
+        </li>
+    </ul>
+
+</div>
+<div>
+    <button (click)="showUserByid()">Show User by Id</button>
+    <h1>User By Id</h1>
+    <h2>{{user  | async | json}}</h2>
+</div>
+
+UPDATE,REMOVE,DELETE: SAMPLE code :
+
+save(post: Post) {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json'
+            })
+        }
+        return this.http.post<Post>(this.url, post, httpOptions)
+            .pipe(tap(() => console.log(`added Post`)),
+                catchError(this.handleError<Post>('save Post'))
+            )
+    }
+    remove(id: number): Observable<Post> {
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json'
+            })
+        }
+        const url = `http://localhost:3000/posts/${id}`;
+        return this.http.delete<Post>(url, httpOptions)
+            .pipe(tap(() => console.log(`deleted Post ${id}`)),
+                catchError(this.handleError<Post>('delete Post'))
+            )
+    }
+    update(id:number,post: Post):Observable<Post> {
+        console.log('service update method')
+        const url = `http://localhost:3000/posts/${id}`;
+
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json'
+            })
+        }
+        return this.http.put<Post>(url, post, httpOptions)
+            .pipe(tap(() => console.log(`updated Post ${post.id}`)),
+                catchError(this.handleError<any>('update Post'))
+            )
+    }
+..............................................................................................
+				  Routing: Single Page Web app
+.............................................................................................
+
+.............................................................................................
+				 Routing
+............................................................................................
+What is routing?
+ Navigation between pages.
+
+Routing is implemented in web apps via links - hyper links.
+
+HTML 5 offers hyper links through which we can navigate from one page to another page.
+
+HTML offers an address to which we will be redirected- URL,URI.
+
+Types of navigation
+
+1.static  - html
+2.dynamic  - via server side programs
+
+In 2008, html 5 introduced dynamic navigation inside browser via javascript api called history which is object contains apis related for navigation.
+  This is brith of single page web apps.
+
+single page web apps(spa) contains one physical page we call landing page - home page
+
+How to create single page Application?
+
+SPAs use AJAX and HTML5 to create fluid and responsive Web apps, without constant page reloads. However, this means much of the work happens on the client side, in JavaScript.
+
+SPA Stack:
+
+javascript
+HTML 5
+CSS 3
+
+Frameworks and SPA :
+
+ Every client side js frameworks today offers spa implementation.
+ Angular provides a spa implemenation via "@angualr/routing" project.
+
+Routing Core Concepts:
+
+1.URL Patterns
+
+http://www.mydomain.com/index.html - static url
+http://www.mydomain.com/contactus.pdf -static url
+http://www.mydomain.com/login.aspx / login.jsp /login.php  - dynamic content url
+
+http://www.mydomain.com/api/users/comments  -  Resource based url - REST API
+
+
+Spa url patterns: hashbang url pattern
+
+http://www.mydomain.com/index.html#contactus
+http://www.mydomain.com/index.html#products
+http://www.mydomain.com/index.html#profiles
+
+spa simple syntax : here landing page and # symbol not req.which is implict.
+http://www.mydomain.com/profiles
+
+2.URLs AND page
+
+ Every url is mapped with Component which display content of page.
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+Core Concepts and Objects in Routing :
+
+1.RouterModule
+2.Route[]
+  An array of Route objects that define the navigation paths for the application.
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home.component';
+
+//mapping component with url
+
+/home ===> render HomeComponent
+/abc  ===> render RenderComponent
+
+const routes: Routes = [
+  {
+    path: 'home', component: HomeComponent
+  },
+ {
+    path: 'abc', component: AbcComponent
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+3.RouterLink
+
+  Hyperlinks are defined <a href="home">home</a>
+
+  <a routerLink="home">home</a>
+  <a [routerLink]="home">home</a>
+
+4.RouterOutlet
+  Acts as a placeholder that Angular dynamically fills based on the current router state.
+
+..............................................................................................
+				Modularzation and Routing
+.............................................................................................
+
+Angular Apps are highly modular.
+
+Modules are based on features
+
+profiles is one module
+
+admin is another module
+
+payment is another module
+
+............................................................................................
+
+Path Mapping:
+
+1.static path
+   /home /admin /heroes /products    
+	path:'home' path:'heroes' 
+2.dynamic  path
+    /heroes/1  /heores/100
+    path:'heroes/:id'
+3.homepath
+   /  path: ''
+4.nopath
+  /xxx
+   path:'**'
+
+default Path
+
+http://www.example.com/  http://localhost:4200/ 
+
+when ever we enter this in browser , angular looks path:''
+ 
+....................................................................................
+
+Path Redirection:
+ 
+if angular finds a particular url, if you want to redirect to some other url
+
+  eg:
+
+ if you type
+
+  /foo =======> /bar
+
+ {path:'/foo' ,redirectTo:'/bar'
+  pathMatch: 'full' -Take full url pattern
+
+..............................................................................................
+
+Dynamic routing:
+
+  /hero/:id
+
+.............................................................................................
+		 How to access Route Information during Navigation
+...........................................................................................
+
+
+Lets assume you are moving from http://localhost:4200/superheroes  to  /superhero/11
+
+
+How to read 11(route parameter) inside component?
+
+ActivatedRoute:
+Provides access to information about a route associated with a component that is loaded in an outlet. Use to traverse the RouterState tree and extract information from nodes.
+
+............................................................................................
+			How to move from one page to another page
+
+
+1.hyper links  <a routerLink="/home">
+
+2.via Code : Programetic navigation : 
+
+Router:
+A service that provides navigation among views and URL manipulation capabilities.
+
+http://localhost:4200/superhero/11
+
+back buttonLogic with extra data supplied via url:
+
+http://localhost:4200/superheroes;id=11;foo=foo
+.............................................................................................
+				Lazy Loading
+............................................................................................
+
+Angular app is collectionof many js files. if you sent the whole app to the browser it may take time.
+Lazy loading is concept through which we can break application into smaller js , on demand only we can send js files.
+
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+    canLoad: [AuthGuard]
+  }
+
+loadChildren: property tells angular to break the admin.module javascript to be loaded on demand
+
+............................................................................................
+				Nested Routing
+.............................................................................................
+
+Menu
+  |
+   submenu
+   submenu
+
+Single Path
+
+{path:'category' , component:CagetoryComponent}
+
+{path:'category' , 
+ children: [
+   {path:'books' ,component:Books}
+ ]
+}
+
+/category/books - url pattern
+............................................................................................
+			Auth Gurad : Authentication based Routing
+............................................................................................
+
+Who can access which url and which component
+
+{path: 'admin',component:AdminComponent, canActivate: [AuthGuard],}
+
+here canActivate property result only decide whether AdminComponent to be rendered or not.
+
+AuthGuard here is simple service which has to return boolean value "true/false"
+
+.............................................................................................
+			 Mulitple RouterOutlet in a Page
+.............................................................................................
+
+http://localhost:4200/admin(popup:compose)
+http://localhost:4200/admin/crises(popup:compose)
+http://localhost:4200/admin/heroes(popup:compose)
+
+
+closePopup() {
+    // Providing a `null` value to the named outlet
+    // clears the contents of the named outlet
+    this.router.navigate([{ outlets: { popup: null }}]);
+  }
+
+<div class="wrapper">
+  <h1 class="title">Angular Router</h1>
+  <nav>
+    <a routerLink="/crisis-center" routerLinkActive="active">Crisis Center</a>
+    <a routerLink="/superheroes" routerLinkActive="active">Heroes</a>
+    <a routerLink="/admin" routerLinkActive="active">Admin</a>
+    <a routerLink="/login" routerLinkActive="active">Login</a>
+    <a [routerLink]="[{ outlets: { popup: ['compose'] } }]">Contact</a>
+  </nav>
+  <div [@routeAnimation]="getAnimationData(routerOutlet)">
+    <router-outlet #routerOutlet="outlet"></router-outlet>
+  </div>
+  <router-outlet name="popup"></router-outlet>
+</div>
+
+
